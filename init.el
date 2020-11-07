@@ -190,27 +190,38 @@
 
 Assume this function will be run as a `org-journal-after-entry-create-hook'"
   (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
-        (templates '("Work" "Personal" "Computer & Programming")))
-    ;; Current position would be at the end of the subtree of the current day's heading
-    ;; or (point-max).
+        (templates '("Work" "Personal" "Computer & Programming"))
+        insert-point)
+    ;; Current position would be at the end of the subtree of the current day's
+    ;; heading or (point-max).
     (save-restriction
       (save-match-data
-        ;; Go up to date level
+        ;; Go up to date level, point would be the bol of today's date heading
         (while (org-up-heading-safe))
         (org-narrow-to-subtree)
         (setq case-fold-search nil) ; case-sensitive
+        ;; Set initial insert-point
+        (setq insert-point
+              (if (re-search-forward heading-re nil t)
+                  (progn
+                    (beginning-of-line)
+                    (point))
+                (point-max)))
+        ;; Insert template
         (when org-journal--newly-created-p
           (dolist (template templates)
             (goto-char (point-min))
             (if (re-search-forward (concat heading-re template) nil t)
-                (ignore)
-              (outline-end-of-subtree)
-              ;; (insert "\n" )
-              (insert (concat org-journal-time-prefix template "\n")))))
-        ;; Sometimes :LOGBOOK: drawers don't get folded. why?
+                (setq insert-point (progn
+                                     (outline-end-of-subtree)
+                                     (point)))
+              (goto-char insert-point)
+              (insert (concat org-journal-time-prefix template "\n"))
+              (setq insert-point (point)))))
+        ;; Sometimes, :LOGBOOK: drawers don't get folded. dunno why?
+        (goto-char (point-min))
         (org-cycle-hide-drawers 'subtree)
         ;; Cursor location, beginning of the first ** level entry
-        (goto-char (point-min))
         (re-search-forward heading-re nil t)
         (goto-char (match-end 0))))
     (save-buffer)))
