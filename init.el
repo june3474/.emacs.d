@@ -55,19 +55,13 @@
 (set-language-environment "Korean")
  ;; Now, we can toggle Hangul input mode with with C-\.
 (setq default-input-method "korean-hangul")
- ;; But, what we gonna really use is utf-8.
- ;; i.e. enforce to save buffer in utf-8 regardless of language-env.
- ;; This also sets other encoding settings below to utf-8.
+ ;; But, we prefer utf-8.
+ ;; Settings below will force buffers saved in utf-8 regardless of language-env.
+ ;; This also sets other encoding settings below to utf-8:
  ;; default-coding-system for new files, keyboard input, 
  ;; terminal output, sub-process I/O. default-file-name-coding-system.
-(setq buffer-file-coding-system 'mule-utf-8)
+(setq buffer-file-coding-system 'utf-8)
  ;; give the first priority to utf-8 followed by euc-kr
-(prefer-coding-system 'utf-8)
- ;; Enable Hangul copy & paste from/to clipboard.
- ;; X uses "ctext" coding for clipboard by default
- ;; whileas emacs follows system coding sytem 
-(set-selection-coding-system 'ctext)
- ;; set unicode hangul fonts
 (set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
 (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
 
@@ -170,7 +164,13 @@
              ;; Apply to derived modes too
              (my-org-list-bullet)
 			 (org-bullets-mode t)
-             (org-indent-mode t)))
+             (org-indent-mode t)
+             ;; Select languages to use in org mode
+             (org-babel-do-load-languages
+              'org-babel-load-languages
+              '((emacs-lisp . t)
+                (python . t)
+                (sh . t)))))
 
  ;; org-journal mode
 (defun my-org-journal-handle-old-carryover (old_carryover)
@@ -196,7 +196,7 @@ Assume this function will be run as a `org-journal-after-entry-create-hook'"
     ;; heading or (point-max).
     (save-restriction
       (save-match-data
-        ;; Go up to date level, point would be the bol of today's date heading
+        ;; Go upto date level, point would be at the bol of today's date heading
         (while (org-up-heading-safe))
         (org-narrow-to-subtree)
         (setq case-fold-search nil) ; case-sensitive
@@ -293,7 +293,7 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
         org-journal-hide-entries-p nil
         org-journal-find-file 'find-file)
   (let (;; (current-prefix-arg nil)
-        ;; with C-u prefix, avoid the automatic creation of a new entry
+        ;; With C-u prefix, avoid the automatic creation of a new entry
         (current-prefix-arg '(4)))
     (call-interactively 'org-journal-new-entry)))
 (global-set-key (kbd "C-c C-j") 'my-journal)
