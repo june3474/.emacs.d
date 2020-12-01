@@ -153,6 +153,8 @@
 (with-eval-after-load 'org
   (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
                                       "CANCELED(c!)" "DONE(d!)")))
+  ;; use old style easy-template, i.e., <trigger TAB
+  (require 'org-tempo)
   (require 'my-org)
   (my-org-face))
 
