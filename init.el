@@ -129,6 +129,7 @@
 						 'nxml-forward-element
 					   'sgml-skip-tag-forward)
 					 nil))
+  ;; Bind key to 'C-c h'
   (local-set-key (kbd "C-c h") 'hs-toggle-hiding))
 
 (dolist (hook '(nxml-mode-hook sgml-mode-hook html-mode-hook))
@@ -144,18 +145,17 @@
    '(("^[[:space:]]*\\(-\\) "
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
-
 (with-eval-after-load 'org-bullets
   (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•")))
 
  ;; `org-todo-keywords' have to be set before org-mode starts.
  ;;  Otherwise, buffer-local variable `org-todo-keywords-1' will be messed up.
 (with-eval-after-load 'org
-  (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
-                                      "CANCELED(c!)" "DONE(d!)")))
+  (require 'my-org)
   ;; use old style easy-template, i.e., <trigger TAB
   (require 'org-tempo)
-  (require 'my-org)
+  (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
+                                      "CANCELED(c!)" "DONE(d!)")))
   (my-org-face))
 
 (add-hook 'org-mode-hook
@@ -166,69 +166,11 @@
              ;; Apply to derived modes too
              (my-org-list-bullet)
 			 (org-bullets-mode t)
-             (org-indent-mode t)
-             ;; Select languages to use in org mode
-             (org-babel-do-load-languages
-              'org-babel-load-languages
-              '((emacs-lisp . t)
-                (python . t)
-                (sh . t)))))
+             (org-indent-mode t)))
 
  ;; org-journal mode
-(defun my-org-journal-handle-old-carryover (old_carryover)
-  "My custom function to handle the old carryover entries in the previous day's journal"
-  (save-excursion
-    (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
-      (dolist (entry (reverse old_carryover))
-        (save-restriction
-          (narrow-to-region (car entry) (cadr entry)) 
-          (goto-char (point-min))
-          (org-scan-tags '(lambda ()
-                            (org-todo (concat (org-get-todo-state) "⥱")))
-                         matcher org--matcher-tags-todo-only))))))
-
-(defun my-org-journal-insert-template ()
-  "Insert template after a new journal is created.
-
-Assume this function will be run as a `org-journal-after-entry-create-hook'"
-  (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
-        (templates '("Work" "Personal" "Computer & Programming"))
-        insert-point)
-    ;; Current position would be at the end of the subtree of the current day's
-    ;; heading or (point-max).
-    (save-restriction
-      (save-match-data
-        ;; Go upto date level, point would be at the bol of today's date heading
-        (while (org-up-heading-safe))
-        (org-narrow-to-subtree)
-        (setq case-fold-search nil) ; case-sensitive
-        ;; Set initial insert-point
-        (setq insert-point
-              (if (re-search-forward heading-re nil t)
-                  (progn
-                    (beginning-of-line)
-                    (point))
-                (point-max)))
-        ;; Insert template
-        (when org-journal--newly-created-p
-          (dolist (template templates)
-            (goto-char (point-min))
-            (if (re-search-forward (concat heading-re template) nil t)
-                (setq insert-point (progn
-                                     (outline-end-of-subtree)
-                                     (point)))
-              (goto-char insert-point)
-              (insert (concat org-journal-time-prefix template "\n"))
-              (setq insert-point (point)))))
-        ;; Sometimes, :LOGBOOK: drawers don't get folded. dunno why?
-        (goto-char (point-min))
-        (org-cycle-hide-drawers 'subtree)
-        ;; Cursor location, beginning of the first ** level entry
-        (re-search-forward heading-re nil t)
-        (goto-char (match-end 0))))
-    (save-buffer)))
-
 (with-eval-after-load 'org-journal
+  (require 'my-org-journal)
   (setq org-todo-keywords
         '((sequence "TODO(t!)" "WORKING(w!)" "|"
                     "TODO⥱" "WORKING⥱" "DONE(d!)"))
@@ -275,6 +217,18 @@ Assume this function will be run as a `org-journal-after-entry-create-hook'"
     (revert-buffer t t)))
 (global-set-key [(f12)] 'revert-buffer-with-euc-kr)
 
+(defun enable-babel ()
+  "Enabel source block evaluation"
+  (interactive)
+  (if (not (derived-mode-p 'org-mode))
+      (error "Not in Org mode")
+    ;; Select languages
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (python . t)
+       (shell . t)))))
+
 (defun my-journal ()
   "Open/create today's journal. Bind key to C-c C-j.
 
@@ -299,4 +253,3 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
         (current-prefix-arg '(4)))
     (call-interactively 'org-journal-new-entry)))
 (global-set-key (kbd "C-c C-j") 'my-journal)
-
