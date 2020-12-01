@@ -61,7 +61,8 @@
  ;; default-coding-system for new files, keyboard input, 
  ;; terminal output, sub-process I/O. default-file-name-coding-system.
 (setq buffer-file-coding-system 'utf-8)
- ;; give the first priority to utf-8 followed by euc-kr
+;; give the first priority to utf-8 followed by euc-kr
+(prefer-coding-system 'utf-8)
 (set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
 (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
 
