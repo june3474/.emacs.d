@@ -39,13 +39,17 @@
   (normal-erase-is-backspace-mode 1))
 
 
-;; BUILD MY `load-path'
+;; BUILD MY `load-path' & `custom-theme-directory'
 ;;---------------------------------------------------------------------
-(when (file-directory-p "~/.emacs.d/lisp/")
-	  (add-to-list 'load-path "~/.emacs.d/lisp/")
-	  ;; add subdirectories of ~/emacs.d/lisp/ to the load-path
-	  (let ((default-directory "~/.emacs.d/lisp/"))
-		(normal-top-level-add-subdirs-to-load-path)))
+(let ((lisp-dir (concat user-emacs-directory (file-name-as-directory "lisp")))
+      (theme-dir (concat user-emacs-directory (file-name-as-directory "theme"))))
+  (when (file-directory-p lisp-dir)
+	(add-to-list 'load-path lisp-dir)
+	;; add subdirectories of ~/emacs.d/lisp/ to the load-path
+	(let ((default-directory lisp-dir))
+	  (normal-top-level-add-subdirs-to-load-path)))
+  (when (file-directory-p theme-dir)
+    (add-to-list 'custom-theme-load-path theme-dir)))
 
 
 ;; CODING SYSTEM & FONT
@@ -256,3 +260,9 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
   ;; Fold :LOGBOOK: drawers
   (org-hide-drawer-all))
 (global-set-key (kbd "C-c C-j") 'my-journal)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
