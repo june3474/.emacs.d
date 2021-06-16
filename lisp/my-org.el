@@ -10,7 +10,7 @@
   (set-face-attribute 'org-level-4 nil :height 1.1)
   ;; For org-level5~8, use default settings inherited from outline5~8
   (set-face-attribute 'org-link nil :underline t)
-  (set-face-attribute 'org-headline-done nil :strike-through t)
+  ;(set-face-attribute 'org-headline-done nil :strike-through t)
   (set-face-attribute 'org-document-title nil :foreground "pale turquoise"
 					                          :weight 'bold
   										      :height 1.2
