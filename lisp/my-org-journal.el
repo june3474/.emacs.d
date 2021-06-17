@@ -33,14 +33,14 @@ Assume this function will be run as a `org-journal-after-entry-create-hook'"
           ;; Set initial search-starting point
           (if (re-search-forward heading-re nil 'end)
               (beginning-of-line)
-            (unless (\= 0 (current-column)) (insert "\n")))
+            (unless (= 0 (current-column)) (insert "\n")))
           ;; Insert template
           (dolist (template templates)
             (if (re-search-forward (concat heading-re template) nil t)
                 ;; `outline-end-of-subtree' does not work well. dunno why?
                 (if (re-search-forward heading-re nil 'end)
                     (beginning-of-line))
-              (unless (\= 0 (current-column)) (insert "\n"))
+              (unless (= 0 (current-column)) (insert "\n"))
               (insert (concat org-journal-time-prefix template "\n")))))
         (goto-char (point-min))
         ;; Either code below doesn't seem to work. :LOGBOOK: drawers don't get folded.
