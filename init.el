@@ -246,7 +246,8 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
   ;; (interactive "P")
   (interactive)
   (require 'org-journal)
-  (setq org-journal-dir "~/Documents/journal/"
+  (setq org-journal-dir "/ssh:dks@jupiter:/home/dks/Documents/journal/"
+        ; org-journal-dir "~/Documents/journal/"
         org-journal-file-type 'monthly
         org-journal-file-format "%Y%m"
         org-journal-date-format "%Y-%m-%d (%A)"
