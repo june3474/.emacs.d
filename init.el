@@ -37,7 +37,7 @@
 ;; adjust the BACKSPACE key's behavior.
 (and (not (display-graphic-p))
      (not (getenv "WSL_DISTRO_NAME"))
-     (normal-erase-is-backspace-mode 1))
+     (normal-erase-is-backspace-mode 0))
 
 
 ;; BUILD MY `load-path' & `custom-theme-directory'
