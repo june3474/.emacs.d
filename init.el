@@ -33,10 +33,11 @@
                          dired-directory
                          (buffer-name)))))
 
-;; In the text-terminal, i.e., not in a graphic mode like X,
+;; In the text-console, i.e., not in a graphic mode like X, and not on WSL
 ;; adjust the BACKSPACE key's behavior.
-(unless (display-graphic-p)
-  (normal-erase-is-backspace-mode 1))
+(and (not (display-graphic-p))
+     (not (getenv "WSL_DISTRO_NAME"))
+     (normal-erase-is-backspace-mode 1))
 
 
 ;; BUILD MY `load-path' & `custom-theme-directory'
