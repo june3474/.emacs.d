@@ -8,6 +8,8 @@
  '(column-number-mode t)
  '(compilation-window-height 8)
  '(cua-mode t nil (cua-base))
+ '(custom-safe-themes
+   '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7" "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0" default))
  '(default-major-mode 'text-mode t)
  '(delete-selection-mode t)
  '(indent-tabs-mode nil)
@@ -56,8 +58,8 @@
 
 ;; CODING SYSTEM & FONT
 ;;--------------------------------------------------------------------
- ;; Default language and input method to Korean.
- ;; This enables to directly input Hangul with nabi in -nw emacs.
+ ;; Set default language and input method to Korean.
+ ;; This enables to directly input Hangul with Hangul IME in -nw emacs.
 (set-language-environment "Korean")
  ;; Now, we can toggle Hangul input mode with with C-\.
 (setq default-input-method "korean-hangul")
@@ -69,8 +71,17 @@
 (setq buffer-file-coding-system 'utf-8)
 ;; give the first priority to utf-8 followed by euc-kr
 (prefer-coding-system 'utf-8)
-(set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
-(set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
+
+(defun my-set-hangul-font (frame)
+  (set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
+  (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
+  ;; When run in daemon mode, 'my-set-hangul-font runs only once after the first
+  ;; frame being created. If 'my-set-hangul-font is not in the hook, nothing is done. 
+  (remove-hook 'after-make-frame-functions #'my-set-hangul-font))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'my-set-hangul-font)
+  (my-set-hangul-font (selected-frame)))
 
 
 ;; PACKAGE SETTINGS
@@ -90,6 +101,13 @@
 
 ;; MODE CUSTOMIZATIONS
 ;;--------------------------------------------------------------------
+
+ ;; daemon mode
+(add-hook 'server-switch-hook
+          (lambda ()
+            ;; Give the focus to the newly created frame
+            (select-frame-set-input-focus (selected-frame))))
+
  ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
           '(lambda ()
