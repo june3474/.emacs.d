@@ -103,12 +103,9 @@
 ;;--------------------------------------------------------------------
 ;; daemon mode
 (when (daemonp)
-  ; Give the focus to the newly created frame
-  (add-hook 'server-switch-hook
-            (lambda ()
-              (select-frame-set-input-focus (selected-frame))))
-  ; remap 'save-buffer-kill-terminal(C-x C-c) to C-x k 
-  (global-set-key (kbd "C-x C-c") 'kill-current-buffer))
+  ; Bring the newly created frame to front
+  (add-hook 'server-after-make-frame-hook
+            #'raise-frame))
 
 ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
@@ -283,6 +280,7 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
   ; Fold :LOGBOOK: drawers
   (org-hide-drawer-all))
 (global-set-key (kbd "C-c C-j") 'my-journal)
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
