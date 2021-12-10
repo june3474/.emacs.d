@@ -48,7 +48,6 @@ Assume this function will be run as a `org-journal-after-entry-create-hook'"
         ; (org-hide-drawer-all)
         ; (org-cycle-hide-drawers 'subtree)
         ;; Cursor location, beginning of the first ** level entry
-        (re-search-forward heading-re nil t))))
-  (save-buffer))
+        (re-search-forward heading-re nil t)))))
 
 (provide 'my-org-journal)
