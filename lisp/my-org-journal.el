@@ -17,7 +17,7 @@
 (defun my-org-journal-insert-template ()
   "Insert template after a new journal is created.
 
-Assume this function will be run as a `org-journal-after-entry-create-hook'"
+This function is supposed to be run as a `org-journal-after-entry-create-hook'"
   ;; The value of `org-journal-time-prefix' is "** " 
   (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
         (templates '("Work" "Personal" "Computer & Programming")))
@@ -49,5 +49,15 @@ Assume this function will be run as a `org-journal-after-entry-create-hook'"
         ; (org-cycle-hide-drawers 'subtree)
         ;; Cursor location, beginning of the first ** level entry
         (re-search-forward heading-re nil t)))))
+
+(defun my-delete-blank-lines ()
+  "Leave just one blank line at the end
+
+This function is supposed to be run as a `before-save-hook'"
+  (when (eq major-mode 'org-journal-mode)
+    (goto-char(point-max))
+    (if (= 0 (current-column))
+        (delete-blank-lines)
+      (insert "\n"))))
 
 (provide 'my-org-journal)

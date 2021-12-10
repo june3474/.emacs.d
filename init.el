@@ -212,8 +212,13 @@
   (setq org-journal-handle-old-carryover
         'my-org-journal-handle-old-carryover))
 
+; add to global hook
 (add-hook 'org-journal-after-entry-create-hook
           #'my-org-journal-insert-template)
+; add to buffer local hook
+(add-hook 'org-journal-mode-hook
+          (lambda () (add-hook 'before-save-hook
+                               #'my-delete-blank-lines -1 t)))
 
 
 ;; MY FUNCTIONS & KEY BINDING
