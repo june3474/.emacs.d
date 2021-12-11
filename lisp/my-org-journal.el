@@ -11,7 +11,7 @@
           (narrow-to-region (car entry) (cadr entry)) 
           (goto-char (point-min))
           (org-scan-tags '(lambda ()
-                            (org-todo (concat todo-state "⥱")))
+                            (org-todo (concat (org-get-todo-state) "⥱")))
                          matcher org--matcher-tags-todo-only))))))
 
 (defun my-org-journal-insert-template ()
