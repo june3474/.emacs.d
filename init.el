@@ -202,7 +202,9 @@
         '(("TODO" . org-todo) ("WORKING" . org-doing)
           ("TODO⥱" . "LightSteelBlue") ("WORKING⥱" . "LightSteelBlue")
           ("DONE" . org-done))
-        org-journal-carryover-items "TODO=\"TODO\"|TODO=\"WORKING\"")
+        org-journal-carryover-items
+        "TODO=\"TODO\"|TODO=\"WORKING\"|TODO=\"TODO⥱\"|TODO=\"WORKING⥱\"")
+  
   ; Give "⥱" a different color
   (font-lock-add-keywords
    'org-journal-mode
