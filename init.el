@@ -1,8 +1,8 @@
 (custom-set-variables
- ; custom-set-variables was added by Custom.
- ; If you edit it by hand, you could mess it up, so be careful.
- ; Your init file should contain only one such instance.
- ; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(auto-save-default nil)
  '(blink-cursor-blinks 0)
  '(column-number-mode t)
@@ -58,25 +58,25 @@
 
 ;; CODING SYSTEM & FONT
 ;;--------------------------------------------------------------------
- ; Set default language and input method to Korean.
- ; This enables to directly input Hangul with Hangul IME in -nw emacs.
+ ;; Set default language and input method to Korean.
+ ;; This enables to directly input Hangul with Hangul IME in -nw emacs.
 (set-language-environment "Korean")
- ; Now, we can toggle Hangul input mode with with C-\.
+ ;; Now, we can toggle Hangul input mode with with C-\.
 (setq default-input-method "korean-hangul")
- ; But, we prefer utf-8.
- ; Settings below will force buffers saved in utf-8 regardless of language-env.
- ; This also sets other encoding settings below to utf-8:
- ; default-coding-system for new files, keyboard input, 
- ; terminal output, sub-process I/O. default-file-name-coding-system.
+ ;; But, we prefer utf-8.
+ ;; Settings below will force buffers saved in utf-8 regardless of language-env.
+ ;; This also sets other encoding settings below to utf-8:
+ ;; default-coding-system for new files, keyboard input, 
+ ;; terminal output, sub-process I/O. default-file-name-coding-system.
 (setq buffer-file-coding-system 'utf-8)
- ; give the first priority to utf-8 followed by euc-kr
+ ;; give the first priority to utf-8 followed by euc-kr
 (prefer-coding-system 'utf-8)
 
 (defun my-set-hangul-font (frame)
   (set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
   (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
-  ; When run in daemon mode, 'my-set-hangul-font runs only once after the first
-  ; frame being created. If 'my-set-hangul-font is not in the hook, nothing is done. 
+  ;; When run in daemon mode, 'my-set-hangul-font runs only once after the first
+  ;; frame being created. If 'my-set-hangul-font is not in the hook, nothing is done. 
   (remove-hook 'after-make-frame-functions #'my-set-hangul-font))
 
 (if (daemonp)
@@ -103,15 +103,15 @@
 ;;--------------------------------------------------------------------
 ;; daemon mode
 (when (daemonp)
-  ; Bring the newly created frame to front
+  ;; Bring the newly created frame to front
   (add-hook 'server-after-make-frame-hook
             #'raise-frame))
 
 ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
           '(lambda ()
-             ; (define-key lisp-interaction-mode-map (kbd "<C-return>") 'eval-last-sexp)
-             ; Don't truncate outputs with the ellipsis(...)
+             ;; (define-key lisp-interaction-mode-map (kbd "<C-return>") 'eval-last-sexp)
+             ;; Don't truncate outputs with the ellipsis(...)
              (setq eval-expression-print-length nil
                    eval-expression-print-level nil)))
 
@@ -124,15 +124,15 @@
 ;; C & C++ mode
 (add-hook 'c-mode-common-hook
 		  '(lambda ()
-             ; classic Kernighan and Ritchie style instead gnu. 
+             ;; classic Kernighan and Ritchie style instead gnu. 
 			 (setq c-default-style '((java-mode . "java")
 									 (awk-mode . "awk")
 									 (other . "k&r")))
-			 ; Delete a contiguous block of whitespace with a single key.
+			 ;; Delete a contiguous block of whitespace with a single key.
 			 (c-toggle-hungry-state t)
-			 ; (c-toggle-auto-newline t)
+			 ;; (c-toggle-auto-newline t)
 			 (local-set-key (kbd "RET") 'newline-and-indent)
-             ; (semantic-mode t)
+             ;; (semantic-mode t)
 			 (linum-mode t)))
 
 ;; python mode
@@ -153,7 +153,7 @@
 						 'nxml-forward-element
 					   'sgml-skip-tag-forward)
 					 nil))
-  ; Bind key to 'C-c h'
+  ;; Bind key to 'C-c h'
   (local-set-key (kbd "C-c h") 'hs-toggle-hiding))
 
 (dolist (hook '(nxml-mode-hook sgml-mode-hook html-mode-hook))
@@ -165,18 +165,18 @@
   "display the list bullet with '▸'."
   (font-lock-add-keywords
    nil
-   ; list lines start with initial spaces, followed by a dash"
+   ;; list lines start with initial spaces, followed by a dash"
    '(("^[[:space:]]*\\(-\\) "
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
 (with-eval-after-load 'org-bullets
   (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•")))
 
- ; `org-todo-keywords' have to be set before org-mode starts.
- ;  Otherwise, buffer-local variable `org-todo-keywords-1' will be messed up.
+;; `org-todo-keywords' have to be set before org-mode starts.
+;;  Otherwise, buffer-local variable `org-todo-keywords-1' will be messed up.
 (with-eval-after-load 'org
   (require 'my-org)
-  ; use old style easy-template, i.e., <trigger TAB
+  ;; use old style easy-template, i.e., <trigger TAB
   (require 'org-tempo)
   (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
                                       "CANCELED(c!)" "DONE(d!)")))
@@ -204,7 +204,7 @@
           ("DONE" . org-done))
         org-journal-carryover-items "TODO=\"TODO\"|TODO=\"WORKING\"")
   
-  ; Give "⥱" a different color
+  ;; Give "⥱" a different color
   (font-lock-add-keywords
    'org-journal-mode
    '(("\\<TODO\\(⥱\\)\\>" 1 font-lock-keyword-face prepend)
@@ -213,10 +213,10 @@
   (setq org-journal-handle-old-carryover
         'my-org-journal-handle-old-carryover))
 
-; add to global hook
+;; add to global hook
 (add-hook 'org-journal-after-entry-create-hook
           #'my-org-journal-insert-template)
-; add to buffer local hook
+;; add to buffer local hook
 (add-hook 'org-journal-mode-hook
           (lambda () (add-hook 'before-save-hook
                                #'my-delete-blank-lines -1 t)))
@@ -235,7 +235,7 @@
 (defun my-save-and-compile ()
    "Save current buffer and compile. Bind key to F9"
    (interactive)
-   ; Don't make a backup file
+   ;; Don't make a backup file
    (save-buffer 0)
    (compile "make -k"))
 (global-set-key [(f9)] 'my-save-and-compile)
@@ -252,7 +252,7 @@
   (interactive)
   (if (not (derived-mode-p 'org-mode))
       (error "Not in Org mode")
-    ; Select languages
+    ;; Select languages
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((emacs-lisp . t)
@@ -265,13 +265,13 @@
 This key-binding is to open/create a journal when `org-journal' is not loaded yet.
 Once `org-journal' is loaded, C-c C-j is redefined to the `org-journal-new-entry' 
 function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
-  ; If you want `my-journal' to take C-u prefix and pass it to `org-journal-new-entry',
-  ; use (interactive "P") and remove `current-prefix-arg' setting below.
-  ; (interactive "P")
+  ;; If you want `my-journal' to take C-u prefix and pass it to `org-journal-new-entry',
+  ;; use (interactive "P") and remove `current-prefix-arg' setting below.
+  ;; (interactive "P")
   (interactive)
   (require 'org-journal)
   (setq org-journal-dir "~/Documents/journal/"
-        ; org-journal-dir "/ssh:dks@jupiter:/home/dks/Documents/journal/"
+        ;; org-journal-dir "/ssh:dks@jupiter:/home/dks/Documents/journal/"
         org-journal-file-type 'monthly
         org-journal-file-format "%Y%m"
         org-journal-date-format "%Y-%m-%d (%A)"
@@ -279,11 +279,11 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
         org-journal-time-format ""
         org-journal-hide-entries-p nil
         org-journal-find-file 'find-file)
-  (let (; (current-prefix-arg nil)
-        ; With C-u prefix, avoid the automatic creation of a new entry
-        (current-prefix-arg '(4)))
-    (call-interactively 'org-journal-new-entry))
-  ; Fold :LOGBOOK: drawers
+
+  ;; With C-u prefix, create a new entry automatically at the end
+  ;; (current-prefix-arg '(4))
+  (call-interactively 'org-journal-new-entry)
+  ;; Fold :LOGBOOK: drawers
   (org-hide-drawer-all))
 
 (global-set-key (kbd "C-c C-j") 'my-journal)
