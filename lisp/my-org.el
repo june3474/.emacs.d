@@ -4,7 +4,7 @@
 
 (defun my-org-face ()
   "set headline font faces"
-  (set-face-attribute 'org-level-1 nil :height 1.35 :weight 'bold)
+  (set-face-attribute 'org-level-1 nil :height 1.3 :weight 'bold)
   (set-face-attribute 'org-level-2 nil :height 1.3 :weight 'bold)
   (set-face-attribute 'org-level-3 nil :height 1.2)
   (set-face-attribute 'org-level-4 nil :height 1.1)
