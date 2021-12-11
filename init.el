@@ -281,7 +281,8 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
         org-journal-find-file 'find-file)
   (let (; (current-prefix-arg nil)
         ; With C-u prefix, avoid the automatic creation of a new entry
-        (current-prefix-arg '(4)))
+        ;(current-prefix-arg '(4))
+        )
     (call-interactively 'org-journal-new-entry))
   ; Fold :LOGBOOK: drawers
   (org-hide-drawer-all))
