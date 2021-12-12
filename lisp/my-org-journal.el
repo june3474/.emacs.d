@@ -46,10 +46,6 @@ This function is supposed to be run as a `org-journal-after-entry-create-hook'"
               (insert (concat org-journal-time-prefix template "\n")))))
 
         ;; Cursor location, beginning of the first ** level entry
-        ;; Either code below doesn't seem to work. :LOGBOOK: drawers don't get folded.
-        ;; So, place drawer-folding code in the init.el
-        ;;(org-hide-drawer-all)
-        ;;(org-cycle-hide-drawers 'subtree)
         (goto-char (point-min))
         (re-search-forward heading-re nil t)))))
 

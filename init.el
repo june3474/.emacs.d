@@ -26,7 +26,16 @@
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify)))
 
-;; Show the full path of the file visiting in the frame title
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; GENERAL
+;;---------------------------------------------------------------------
+
 (setq-default frame-title-format
               '(:eval
                 (format "Emacs-%s: %s"
@@ -72,16 +81,13 @@
  ;; give the first priority to utf-8 followed by euc-kr
 (prefer-coding-system 'utf-8)
 
-(defun my-set-hangul-font (frame)
+(defun my-set-hangul-font ()
   (set-fontset-font "fontset-default" '(#x1100 . #xffdc) "D2Coding"); hangul range
-  (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding"); user range
-  ;; When run in daemon mode, 'my-set-hangul-font runs only once after the first
-  ;; frame being created. If 'my-set-hangul-font is not in the hook, nothing is done. 
-  (remove-hook 'after-make-frame-functions #'my-set-hangul-font))
-
+  (set-fontset-font "fontset-default" '(#xe0bc . #xf66e) "D2Coding")); user range
+  
 (if (daemonp)
-    (add-hook 'after-make-frame-functions #'my-set-hangul-font)
-  (my-set-hangul-font (selected-frame)))
+    (add-hook 'server-after-make-frame-hook #'my-set-hangul-font)
+  (my-set-hangul-font))
 
 
 ;; PACKAGE SETTINGS
@@ -103,9 +109,14 @@
 ;;--------------------------------------------------------------------
 ;; daemon mode
 (when (daemonp)
+  ;; early load of org which takes time to load
+  (require 'org)
   ;; Bring the newly created frame to front
   (add-hook 'server-after-make-frame-hook
-            #'raise-frame))
+            #'raise-frame)
+  ;; make cursor blink
+  (add-hook 'server-after-make-frame-hook
+            #'blink-cursor-mode))
 
 ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
@@ -169,25 +180,32 @@
    '(("^[[:space:]]*\\(-\\) "
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
+ ;; `eval-after-load' runs once after an elisp library be loaded.
+ ;; whereas `mode-hook' runs on every buffer where the mode is enabled.
+ ;; `eval-after-load' runs first and `mode-hook' later. 
 (with-eval-after-load 'org-bullets
   (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•")))
 
-;; `org-todo-keywords' have to be set before org-mode starts.
-;;  Otherwise, buffer-local variable `org-todo-keywords-1' will be messed up.
+ ;; `org-todo-keywords' have to be set before org-mode starts.
+ ;;  Otherwise, buffer-local variable `org-todo-keywords-1' will be messed up.
 (with-eval-after-load 'org
   (require 'my-org)
   ;; use old style easy-template, i.e., <trigger TAB
   (require 'org-tempo)
   (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
                                       "CANCELED(c!)" "DONE(d!)")))
-  (my-org-face))
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook
+                '(lambda () (setq org-startup-folded 'content)))
+    (setq org-startup-folded 'content)))
 
 (add-hook 'org-mode-hook
+           ;; Applied to derived modes too.
 		  '(lambda ()
 			 (setq line-spacing 0.16
 			       org-hide-emphasis-markers t
                    org-log-into-drawer t)
-             ; Apply to derived modes too
+             (my-org-face)
              (my-org-list-bullet)
 			 (org-bullets-mode t)
              (org-indent-mode t)))
@@ -277,20 +295,10 @@ function. Thus, variable settings--i.e., setq part--do not happen repeatedly"
         org-journal-date-format "%Y-%m-%d (%A)"
         org-journal-search-result-date-format org-journal-date-format
         org-journal-time-format ""
-        org-journal-hide-entries-p nil
         org-journal-find-file 'find-file)
 
   ;; With C-u prefix, create a new entry automatically at the end
   ;; (current-prefix-arg '(4))
-  (call-interactively 'org-journal-new-entry)
-  ;; Fold :LOGBOOK: drawers
-  (org-hide-drawer-all))
+  (call-interactively 'org-journal-new-entry))
 
 (global-set-key (kbd "C-c C-j") 'my-journal)
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
