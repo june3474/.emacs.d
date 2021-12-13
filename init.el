@@ -108,13 +108,37 @@
 ;; MODE CUSTOMIZATIONS
 ;;--------------------------------------------------------------------
 ;; daemon mode
+(defun my-server-save-buffers-kill-terminal (&optional arg)
+  "Modified `server-save-buffers-kill-terminal' function enabling to kill a file-visiting
+buffer which are not stared with emacsclient.
+
+`server-save-buffers-kill-terminal' function, which is mapped to C-x C-c in emacsclient,
+works as expected with the files started with emacsclient,i.e., files offered as arguments
+of emacsclient. But the files opend afterwards with C-x C-f are not killed and ramain buried. With re-mapping to C-x C-c, we can close file-visiting buffers almost the same way
+regardless of their visiting time."
+  ;; should be `interactive' to use with `global-set-key'.
+  (interactive)
+  (let* ((proc (frame-parameter nil 'client))
+        (buffers (process-get proc 'buffers))
+        (buf (current-buffer)))
+    (if (or (eq proc 'nowait)
+            ;; file-visiting buffers started with emacsclient.
+            (memq buf buffers)
+            ;; system buffers whose names have "*buffername*" form.
+            (string-match-p "^[ ]?\\*.*\\*$" (buffer-name buf)))
+        ;; delegate to `server-save-buffers-kill-terminal'.
+        (server-save-buffers-kill-terminal arg)
+      (kill-buffer)
+      (delete-frame))))
+
 (when (daemonp)
-  ;; early load of org which takes time to load
+  ;; Load `org' beforehand, which takes time to load
   (require 'org)
+  (global-set-key (kbd "C-x C-c") 'my-server-save-buffers-kill-terminal)
   ;; Bring the newly created frame to front
   (add-hook 'server-after-make-frame-hook
             #'raise-frame)
-  ;; make cursor blink
+  ;; Make cursor blink
   (add-hook 'server-after-make-frame-hook
             #'blink-cursor-mode))
 
