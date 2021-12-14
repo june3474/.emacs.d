@@ -35,7 +35,6 @@
 
 ;; GENERAL
 ;;---------------------------------------------------------------------
-
 (setq-default frame-title-format
               '(:eval
                 (format "Emacs-%s: %s"
@@ -109,14 +108,17 @@
 ;;--------------------------------------------------------------------
 ;; daemon mode
 (defun my-server-save-buffers-kill-terminal (&optional arg)
-  "Modified `server-save-buffers-kill-terminal' function enabling to kill a file-visiting
-buffer which are not stared with emacsclient.
+  "Modified `server-save-buffers-kill-terminal' function enabling to kill the current 
+file-visiting buffer which is not stared with emacsclient.
 
-`server-save-buffers-kill-terminal' function, which is mapped to C-x C-c in emacsclient,
-works as expected with the files started with emacsclient,i.e., files offered as arguments
-of emacsclient. But the files opend afterwards with C-x C-f are not killed and ramain buried. With re-mapping to C-x C-c, we can close file-visiting buffers almost the same way
-regardless of their visiting time."
-  ;; should be `interactive' to use with `global-set-key'.
+The purpose of this function is to wrap(replace) the `server-save-buffers-kill-terminal' 
+function, which is mapped to C-x C-c in daemon mode.
+`server-save-buffers-kill-terminal' works as expected with the files started with 
+emacsclient,i.e., files offered as arguments of emacsclient. But the files opend 
+afterwards with C-x C-f are not killed and ramain buried when exits. 
+With re-mapping C-x C-c to this function, we can close any file-visiting buffers almost 
+the same way no matter when they are opened."
+  ;; should be `interactive' to be mapped to a shourcut key.
   (interactive)
   (let* ((proc (frame-parameter nil 'client))
         (buffers (process-get proc 'buffers))
@@ -124,9 +126,9 @@ regardless of their visiting time."
     (if (or (eq proc 'nowait)
             ;; file-visiting buffers started with emacsclient.
             (memq buf buffers)
-            ;; system buffers whose names have "*buffername*" form.
+            ;; system buffers whose names have "\\*buffername\\*" form.
             (string-match-p "^[ ]?\\*.*\\*$" (buffer-name buf)))
-        ;; delegate to `server-save-buffers-kill-terminal'.
+        ;; let `server-save-buffers-kill-terminal' handle as usual.
         (server-save-buffers-kill-terminal arg)
       (kill-buffer)
       (delete-frame))))
