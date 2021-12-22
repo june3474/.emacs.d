@@ -24,7 +24,8 @@
  '(tab-width 4)
  '(text-mode-hook '(text-mode-hook-identify))
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style 'forward nil (uniquify)))
+ '(uniquify-buffer-name-style 'forward nil (uniquify))
+ '(ediff-split-window-function 'split-window-horizontally))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
