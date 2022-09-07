@@ -12,20 +12,20 @@
    '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7" "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0" default))
  '(default-major-mode 'text-mode t)
  '(delete-selection-mode t)
+ '(ediff-split-window-function 'split-window-horizontally)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(vscode-dark-plus-theme jetbrains-darcula-theme web-beautify org-bullets ivy))
+   '(markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme web-beautify org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
  '(tab-width 4)
  '(text-mode-hook '(text-mode-hook-identify))
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style 'forward nil (uniquify))
- '(ediff-split-window-function 'split-window-horizontally))
+ '(uniquify-buffer-name-style 'forward nil (uniquify)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -191,8 +191,9 @@ the same way no matter when they are opened."
 						 'nxml-forward-element
 					   'sgml-skip-tag-forward)
 					 nil))
-  ;; Bind key to 'C-c h'
-  (local-set-key (kbd "C-c h") 'hs-toggle-hiding))
+  ;; Bind key to 'C-c h' and middle button
+  (local-set-key (kbd "C-c h") 'hs-toggle-hiding)
+  (local-set-key [mouse-2] 'hs-toggle-hiding))
 
 (dolist (hook '(nxml-mode-hook sgml-mode-hook html-mode-hook))
   (add-hook hook 'hs-minor-mode)
