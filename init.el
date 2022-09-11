@@ -147,7 +147,7 @@ the same way no matter when they are opened."
 
 ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
-          '(lambda ()
+          #'(lambda ()
              ;; (define-key lisp-interaction-mode-map (kbd "<C-return>") 'eval-last-sexp)
              ;; Don't truncate outputs with the ellipsis(...)
              (setq eval-expression-print-length nil
@@ -155,13 +155,13 @@ the same way no matter when they are opened."
 
 ;; text mode
 (add-hook 'text-mode-hook
-          '(lambda ()
+          #'(lambda ()
              (visual-line-mode 1)
              (setq line-spacing 0.15)))
 
 ;; C & C++ mode
 (add-hook 'c-mode-common-hook
-		  '(lambda ()
+		  #'(lambda ()
              ;; classic Kernighan and Ritchie style instead gnu. 
 			 (setq c-default-style '((java-mode . "java")
 									 (awk-mode . "awk")
@@ -175,7 +175,7 @@ the same way no matter when they are opened."
 
 ;; python mode
 (add-hook 'python-mode-hook
-		  '(lambda ()
+		  #'(lambda ()
 			(setq tab-width 4)
 			(setq python-indent 4)))
 
@@ -224,12 +224,12 @@ the same way no matter when they are opened."
                                       "CANCELED(c!)" "DONE(d!)")))
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook
-                '(lambda () (setq org-startup-folded 'content)))
+                #'(lambda () (setq org-startup-folded 'content)))
     (setq org-startup-folded 'content)))
 
 (add-hook 'org-mode-hook
            ;; Applied to derived modes too.
-		  '(lambda ()
+		  #'(lambda ()
 			 (setq line-spacing 0.16
 			       org-hide-emphasis-markers t
                    org-log-into-drawer t)
@@ -248,24 +248,24 @@ the same way no matter when they are opened."
         '(("TODO" . org-todo) ("WORKING" . org-doing)
           ("TODO⥱" . "LightSteelBlue") ("WORKING⥱" . "LightSteelBlue")
           ("DONE" . org-done))
-        org-journal-carryover-items "TODO=\"TODO\"|TODO=\"WORKING\"")
+        org-journal-carryover-items "TODO=\"TODO\"|TODO=\"WORKING\""
+        org-journal-handle-old-carryover 'my-org-journal-handle-old-carryover
+        org-journal-carryover-headings-only t)
   
   ;; Give "⥱" a different color
   (font-lock-add-keywords
    'org-journal-mode
    '(("\\<TODO\\(⥱\\)\\>" 1 font-lock-keyword-face prepend)
      ("\\<WORKING\\(⥱\\)\\>" 1 font-lock-keyword-face prepend))
-   'append)
-  (setq org-journal-handle-old-carryover
-        'my-org-journal-handle-old-carryover))
+   'append))
 
 ;; add to global hook
 (add-hook 'org-journal-after-entry-create-hook
           #'my-org-journal-insert-template)
 ;; add to buffer local hook
 (add-hook 'org-journal-mode-hook
-          (lambda () (add-hook 'before-save-hook
-                               #'my-delete-blank-lines -1 t)))
+          #'(lambda () (add-hook 'before-save-hook
+                                 #'my-delete-blank-lines -1 t)))
 
 
 ;; MY FUNCTIONS & KEY BINDING
