@@ -110,7 +110,7 @@
 ;; daemon mode
 (defun my-server-save-buffers-kill-terminal (&optional arg)
   "Modified `server-save-buffers-kill-terminal' function enabling to kill the current 
-file-visiting buffer which is not stared with emacsclient.
+file-visiting buffer which is not started with emacsclient.
 
 The purpose of this function is to wrap(replace) the `server-save-buffers-kill-terminal' 
 function, which is mapped to C-x C-c in daemon mode.
@@ -137,6 +137,7 @@ the same way no matter when they are opened."
 (when (daemonp)
   ;; Load `org' beforehand, which takes time to load
   (require 'org)
+  ;; remap C-x C-c
   (global-set-key (kbd "C-x C-c") 'my-server-save-buffers-kill-terminal)
   ;; Bring the newly created frame to front
   (add-hook 'server-after-make-frame-hook
@@ -148,7 +149,7 @@ the same way no matter when they are opened."
 ;; lisp-interaction mode, i.e., *scratch* buffer
 (add-hook 'lisp-interaction-mode-hook
           #'(lambda ()
-             ;; (define-key lisp-interaction-mode-map (kbd "<C-return>") 'eval-last-sexp)
+             ;; (define-key lisp-interaction-mode-map (kbd "<C-return>") 'eval-print-last-sexp)
              ;; Don't truncate outputs with the ellipsis(...)
              (setq eval-expression-print-length nil
                    eval-expression-print-level nil)))
@@ -176,8 +177,8 @@ the same way no matter when they are opened."
 ;; python mode
 (add-hook 'python-mode-hook
 		  #'(lambda ()
-			(setq tab-width 4)
-			(setq python-indent 4)))
+			  (setq tab-width 4)
+			  (setq python-indent 4)))
 
 ;; nxml/sgml/html mode
 (defun tag-folding ()
@@ -191,7 +192,7 @@ the same way no matter when they are opened."
 						 'nxml-forward-element
 					   'sgml-skip-tag-forward)
 					 nil))
-  ;; Bind key to 'C-c h' and middle button
+  ;; Bind key to 'C-c h' and middle mouse button
   (local-set-key (kbd "C-c h") 'hs-toggle-hiding)
   (local-set-key [mouse-2] 'hs-toggle-hiding))
 
