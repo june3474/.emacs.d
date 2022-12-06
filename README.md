@@ -10,6 +10,6 @@ git submodule update
 
 ---
 
-## When updating
+## When updating after
 
 git pull --recurse-submodules
