@@ -4,8 +4,8 @@
 
 ;; Author: Ian Y.E. Pan
 ;; URL: https://github.com/ianpan870102/vscode-dark-plus-emacs-theme
-;; Package-Version: 20210925.1940
-;; Package-Commit: b6ab14278cc0aaac13fb7cb3a12e73985a781cb7
+;; Package-Version: 20221121.1846
+;; Package-Commit: f33e1f92f6b34bbd7ecc81cb4c6d48f9cab393d9
 ;; Version: 0.0.0
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -61,6 +61,16 @@
   :type 'boolean
   :group 'dark-plus)
 
+(defcustom vscode-dark-plus-render-line-highlight 'default
+  "Controls rendering of the current line highlight."
+  :type '(radio
+          (const :tag "None" none)
+          (const :tag "Gutter" gutter)
+          (const :tag "Line" line)
+          (const :tag "Gutter and Line" all)
+          (const :tag "Default" default))
+  :group 'dark-plus)
+
 (let ((class '((class color) (min-colors 89)))
       (fg0               "#aeafad")
       (fg1               "#d4d4d4") ; default fg
@@ -86,7 +96,7 @@
       (line-num-current  "#c6c6c6")
       (builtin           "#c586c0")
       (keyword           "#569cd6")
-      (const             "#4ec9b0")
+      (const             "#569cd6")
       (comment           "#6a9955")
       (doc               "#ce9178")
       (doc-alt           "#888888")
@@ -137,7 +147,11 @@
    `(region                                   ((,class (:background ,bg-hl :distant-foreground ,fg0 :extend nil))))
    `(secondary-selection                      ((,class (:inherit region))))
    `(highlight                                ((,class (:foreground "#4db2ff" :underline t)))) ; link hover
-   `(hl-line                                  ((,class (:background ,bg3))))
+   `(hl-line                                  ((,class ,(pcase vscode-dark-plus-render-line-highlight
+                                                          ((or 'line 'all)
+                                                           `(:background ,bg1 :box (:color ,bg3 :line-width (0 . -1))))
+                                                          ('none `(:background ,bg1))
+                                                          ('default `(:background ,bg3))))))
    `(fringe                                   ((,class (:background nil :foreground ,fg4))))
    `(cursor                                   ((,class (:background ,fg1))))
    `(show-paren-match-face                    ((,class (:background ,warning))))
@@ -152,7 +166,12 @@
    `(success                                  ((,class (:foreground ,ms-bluegreen))))
    `(dired-directory                          ((t (:inherit (font-lock-keyword-face)))))
    `(line-number                              ((,class (:inherit default :foreground ,line-num))))
-   `(line-number-current-line                 ((,class (:inherit default :foreground ,line-num-current))))
+   `(line-number-current-line                 ((,class (:inherit default :foreground ,line-num-current
+                                                                 ,@(pcase vscode-dark-plus-render-line-highlight
+                                                                     ((or 'gutter 'all)
+                                                                      `(:background ,bg1 :box (:color ,bg3 :line-width (0 . -1))))
+                                                                     ((or 'none 'default)
+                                                                      `(:background ,bg1)))))))
    `(header-line                              ((,class (:bold nil :foreground ,fg4 :background ,bg3))))
 
    `(mode-line                                ((,class (:bold nil :foreground ,fg4 :background ,mode-line-bg))))
@@ -174,7 +193,11 @@
                                                               ,@(when vscode-dark-plus-scale-org-faces (list :height 1.1))))))
    `(org-level-2                              ((,class (:bold nil :foreground ,ms-lightblue))))
    `(org-level-3                              ((,class (:bold nil :foreground ,ms-blue))))
-   `(org-level-4                              ((,class (:bold nil :foreground ,ms-bluegreen))))
+   `(org-level-4                              ((,class (:bold nil :foreground ,ms-yellow))))
+   `(org-level-5                              ((,class (:bold nil :foreground ,ms-magenta))))
+   `(org-level-6                              ((,class (:bold nil :foreground ,ms-orange))))
+   `(org-level-7                              ((,class (:bold nil :foreground ,ms-lightorange))))
+   `(org-level-8                              ((,class (:bold nil :foreground ,ms-red))))
    `(org-code                                 ((,class (:foreground ,ms-orange))))
    `(org-hide                                 ((,class (:foreground ,fg4))))
    `(org-date                                 ((,class (:underline t :foreground ,var) )))
@@ -496,12 +519,12 @@
    `(swiper-match-face-4                      ((t (:inherit ivy-minibuffer-match-face-4))))
    `(swiper-line-face                         ((t (:foreground ,fg0 :background ,bg4 :extend t))))
 
-   `(git-gutter:added                         ((t (:background ,vc-g :foreground ,vc-g :weight normal))))
-   `(git-gutter:deleted                       ((t (:background ,vc-r :foreground ,vc-r :weight normal))))
-   `(git-gutter:modified                      ((t (:background ,vc-b :foreground ,vc-b :weight normal))))
-   `(git-gutter-fr:added                      ((t (:background ,vc-g :foreground ,vc-g :weight normal))))
-   `(git-gutter-fr:deleted                    ((t (:background ,vc-r :foreground ,vc-r :weight normal))))
-   `(git-gutter-fr:modified                   ((t (:background ,vc-b :foreground ,vc-b :weight normal))))
+   `(git-gutter:added                         ((t (:foreground ,vc-g :weight normal))))
+   `(git-gutter:deleted                       ((t (:foreground ,vc-r :weight normal))))
+   `(git-gutter:modified                      ((t (:foreground ,vc-b :weight normal))))
+   `(git-gutter-fr:added                      ((t (:foreground ,vc-g :weight normal))))
+   `(git-gutter-fr:deleted                    ((t (:foreground ,vc-r :weight normal))))
+   `(git-gutter-fr:modified                   ((t (:foreground ,vc-b :weight normal))))
 
    `(diff-hl-insert                           ((t (:background ,vc-g :foreground ,vc-g))))
    `(diff-hl-delete                           ((t (:background ,vc-r :foreground ,vc-r))))
@@ -531,6 +554,10 @@
    `(highlight-operators-face                 ((t (:inherit default))))
    `(highlight-symbol-face                    ((t (:background "#343a40"))))
 
+   `(highlight-thing                          ((t ,(pcase vscode-dark-plus-render-line-highlight
+                                                     ('default `(:inherit region))
+                                                     (_ `(:background ,bg3))))))
+
    `(window-divider                           ((t (:foreground "gray40"))))
    `(window-divider-last-pixel                ((t (:foreground "gray20"))))
    `(window-divider-first-pixel               ((t (:foreground "gray60"))))
@@ -538,7 +565,7 @@
    `(tree-sitter-hl-face:method.call          ((t (:inherit font-lock-function-name-face))))
    `(tree-sitter-hl-face:function.call        ((t (:inherit font-lock-function-name-face))))
    `(tree-sitter-hl-face:operator             ((t (:inherit default))))
-   `(tree-sitter-hl-face:type.builtin         ((t (:inherit font-lock-keyword-face))))
+   `(tree-sitter-hl-face:constant.builtin     ((t (:inherit font-lock-constant-face))))
    `(tree-sitter-hl-face:number               ((t (:inherit highlight-numbers-number))))
    `(tree-sitter-hl-face:variable.special     ((t (:inherit font-lock-keyword-face))))
    `(tree-sitter-hl-face:keyword              ((t (:foreground ,ms-magenta))))
