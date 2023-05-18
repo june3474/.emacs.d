@@ -1,3 +1,4 @@
 [submodule "lisp/org-journal"]
 	path = lisp/org-journal
 	url = https://github.com/june3474/org-journal.git
+	branch = dks
