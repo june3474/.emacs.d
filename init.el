@@ -112,27 +112,31 @@
   "Modified `server-save-buffers-kill-terminal' function enabling to kill the current 
 file-visiting buffer which is not started with emacsclient.
 
-The purpose of this function is to wrap(replace) the `server-save-buffers-kill-terminal' 
-function, which is mapped to C-x C-c in daemon mode.
 `server-save-buffers-kill-terminal' works as expected with the files started with 
-emacsclient,i.e., files offered as arguments of emacsclient. But the files opend 
-afterwards with C-x C-f are not killed and ramain buried when exits. 
-With re-mapping C-x C-c to this function, we can close any file-visiting buffers almost 
-the same way no matter when they are opened."
-  ;; should be `interactive' to be mapped to a shourcut key.
+emacsclient,i.e., files offered as arguments of emacsclient. But the files(buffers)
+opend afterwards with C-x C-f are not killed and ramain buried when exits. 
+With re-mapping C-x C-c to this function, we can save and close any file-visiting
+buffers almost the same way no matter when they are opened."
+  ;; Should be `interactive' to be mapped to a shourcut key.
   (interactive)
-  (let* ((proc (frame-parameter nil 'client))
-        (buffers (process-get proc 'buffers))
-        (buf (current-buffer)))
-    (if (or (eq proc 'nowait)
-            ;; file-visiting buffers started with emacsclient.
-            (memq buf buffers)
-            ;; system buffers whose names have "\\*buffername\\*" form.
-            (string-match-p "^[ ]?\\*.*\\*$" (buffer-name buf)))
-        ;; let `server-save-buffers-kill-terminal' handle as usual.
-        (server-save-buffers-kill-terminal arg)
-      (kill-buffer)
-      (delete-frame))))
+  ;; Ask & save file-visiting buffers
+  (save-some-buffers arg t)
+  (let ((proc (frame-parameter nil 'client)))
+    ;; Kill file-visiting buffers. Modified buffers will be asked.
+    (dolist (buf (buffer-list))
+      (when (buffer-file-name buf)
+        (kill-buffer buf)))
+    ;; delete frame or client depending on the --no-wait command line option
+    (cond ((eq proc 'nowait)
+	       ;; Nowait frames have no client buffer list.
+	       (if (cdr (frame-list))
+               (delete-frame)
+	         ;; If we're the last frame standing, kill Emacs.
+	         (save-buffers-kill-emacs arg)))
+	      ((processp proc)
+           ;; Delete PROC, including its buffers, terminals and frames
+	       (server-delete-client proc))
+          (t (error "Invalid client frame")))))
 
 (when (daemonp)
   ;; Load `org' beforehand, which takes time to load
