@@ -7,8 +7,8 @@
 ;; Maintainer: Jason R. Blevins <jblevins@xbeta.org>
 ;; Created: May 24, 2007
 ;; Version: 2.6-alpha
-;; Package-Version: 20230412.126
-;; Package-Commit: 5d98592fe516748034d8baf92d7c0ba045e1f87a
+;; Package-Version: 20230522.147
+;; Package-Commit: 0031a9285949f815af42fb27bb6bfe3a1d39f8fa
 ;; Package-Requires: ((emacs "26.1"))
 ;; Keywords: Markdown, GitHub Flavored Markdown, itex
 ;; URL: https://jblevins.org/projects/markdown-mode/
@@ -1106,6 +1106,29 @@ Group 4 matches the text inside the delimiters.")
         'markdown-metadata-value nil
         'markdown-metadata-markup nil)
   "Property list of all Markdown syntactic properties.")
+
+(defvar markdown-literal-faces
+  '(markdown-inline-code-face
+    markdown-pre-face
+    markdown-math-face
+    markdown-url-face
+    markdown-plain-url-face
+    markdown-language-keyword-face
+    markdown-language-info-face
+    markdown-metadata-key-face
+    markdown-metadata-value-face
+    markdown-html-entity-face
+    markdown-html-tag-name-face
+    markdown-html-tag-delimiter-face
+    markdown-html-attr-name-face
+    markdown-html-attr-value-face
+    markdown-reference-face
+    markdown-footnote-marker-face
+    markdown-line-break-face
+    markdown-comment-face)
+  "A list of markdown-mode faces that contain literal text.
+Literal text treats backslashes literally, rather than as an
+escape character (see `markdown-match-escape').")
 
 (defsubst markdown-in-comment-p (&optional pos)
   "Return non-nil if POS is in a comment.
@@ -2222,7 +2245,7 @@ Depending on your font, some reasonable choices are:
                                      (4 'markdown-highlighting-face)
                                      (5 markdown-markup-properties)))
     (,markdown-regex-line-break . (1 'markdown-line-break-face prepend))
-    (,markdown-regex-escape . ((1 markdown-markup-properties prepend)))
+    (markdown-match-escape . ((1 markdown-markup-properties prepend)))
     (markdown-fontify-sub-superscripts)
     (markdown-match-inline-attributes . ((0 markdown-markup-properties prepend)))
     (markdown-match-leanpub-sections . ((0 markdown-markup-properties)))
@@ -2953,6 +2976,18 @@ When FACELESS is non-nil, do not return matches where faces have been applied."
 (defun markdown--match-highlighting (last)
   (when markdown-enable-highlighting-syntax
     (re-search-forward markdown-regex-highlighting last t)))
+
+(defun markdown-match-escape (last)
+  "Match escape characters (backslashes) from point to LAST.
+Backlashes only count as escape characters outside of literal
+regions (e.g. code blocks). See `markdown-literal-faces'."
+  (catch 'found
+    (while (search-forward-regexp markdown-regex-escape last t)
+      (let* ((face (get-text-property (match-beginning 1) 'face))
+             (face-list (if (listp face) face (list face))))
+        ;; Ignore any backslashes with a literal face.
+        (unless (cl-intersection face-list markdown-literal-faces)
+          (throw 'found t))))))
 
 (defun markdown-match-math-generic (regex last)
   "Match REGEX from point to LAST.
@@ -5736,7 +5771,7 @@ See also `markdown-mode-map'.")
 (defun markdown-imenu-create-nested-index ()
   "Create and return a nested imenu index alist for the current buffer.
 See `imenu-create-index-function' and `imenu--index-alist' for details."
-  (let* ((root '(nil . nil))
+  (let* ((root (list nil))
          (min-level 9999)
          hashes headers)
     (save-excursion
@@ -7800,19 +7835,19 @@ Value is a list of elements describing the link:
        ((thing-at-point-looking-at markdown-regex-link-inline)
         (setq bang (match-string-no-properties 1)
               begin (match-beginning 0)
-              end (match-end 0)
               text (match-string-no-properties 3)
               url (match-string-no-properties 6))
-        (if (match-end 7)
-            (setq title (substring (match-string-no-properties 7) 1 -1))
-          ;; #408 URL contains close parenthesis case
-          (goto-char (match-beginning 5))
-          (let ((paren-end (scan-sexps (point) 1)))
-            (when (and paren-end (< end paren-end))
-              (setq url (buffer-substring (match-beginning 6) (1- paren-end)))))))
+        ;; consider nested parentheses
+        ;; if link target contains parentheses, (match-end 0) isn't correct end position of the link
+        (let* ((close-pos (scan-sexps (match-beginning 5) 1))
+               (destination-part (string-trim (buffer-substring-no-properties (1+ (match-beginning 5)) (1- close-pos)))))
+          (setq end close-pos)
+          (if (string-match "\\([^ ]+\\)\\s-+\\(.+\\)" destination-part)
+              (setq url (match-string-no-properties 1 destination-part)
+                    title (substring (match-string-no-properties 2 destination-part) 1 -1))
+            (setq url destination-part))))
        ;; Reference link at point.
-       ((or (thing-at-point-looking-at markdown-regex-link-inline)
-            (thing-at-point-looking-at markdown-regex-link-reference))
+       ((thing-at-point-looking-at markdown-regex-link-reference)
         (setq bang (match-string-no-properties 1)
               begin (match-beginning 0)
               end (match-end 0)
@@ -8781,7 +8816,7 @@ mode to use is `tuareg-mode'."
   "Return major mode that should be used for LANG.
 LANG is a string, and the returned major mode is a symbol."
   (cl-find-if
-   'fboundp
+   #'markdown--lang-mode-predicate
    (nconc (list (cdr (assoc lang markdown-code-lang-modes))
                 (cdr (assoc (downcase lang) markdown-code-lang-modes)))
           (and (fboundp 'treesit-language-available-p)
@@ -8792,6 +8827,14 @@ LANG is a string, and the returned major mode is a symbol."
           (list
            (intern (concat lang "-mode"))
            (intern (concat (downcase lang) "-mode"))))))
+
+(defun markdown--lang-mode-predicate (mode)
+  (and mode
+       (fboundp mode)
+       ;; https://github.com/jrblevin/markdown-mode/issues/761
+       (cl-loop for pair in auto-mode-alist
+                for func = (cdr pair)
+                thereis (and (atom func) (eq mode func)))))
 
 (defun markdown-fontify-code-blocks-generic (matcher last)
   "Add text properties to next code block from point to LAST.

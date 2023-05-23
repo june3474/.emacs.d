@@ -95,7 +95,7 @@
 ;; package repository
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "https://melpa.org/packages/") t)
+			 '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
 ;; ivy
