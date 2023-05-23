@@ -109,14 +109,15 @@
 ;;--------------------------------------------------------------------
 ;; daemon mode
 (defun my-server-save-buffers-kill-terminal (&optional arg)
-  "Modified `server-save-buffers-kill-terminal' function enabling to kill the current 
-file-visiting buffer which is not started with emacsclient.
+  "Modified `server-save-buffers-kill-terminal' function to kill the all 
+file-visiting buffer before deleting the frame.
 
-`server-save-buffers-kill-terminal' works as expected with the files started with 
-emacsclient,i.e., files offered as arguments of emacsclient. But the files(buffers)
-opend afterwards with C-x C-f are not killed and ramain buried when exits. 
-With re-mapping C-x C-c to this function, we can save and close any file-visiting
-buffers almost the same way no matter when they are opened."
+`server-save-buffers-kill-terminal' works as expected with the files started
+with emacsclient,i.e., files offered as arguments of emacsclient.
+But the files(buffers) opend afterwards with C-x C-f are not killed and ramain
+buried in the server.
+With re-mapping C-x C-c to this function, we can close emacsclient almost
+the same way as the regular emacs."
   ;; Should be `interactive' to be mapped to a shourcut key.
   (interactive)
   ;; Ask & save file-visiting buffers
@@ -124,7 +125,9 @@ buffers almost the same way no matter when they are opened."
   (let ((proc (frame-parameter nil 'client)))
     ;; Kill file-visiting buffers. Modified buffers will be asked.
     (dolist (buf (buffer-list))
-      (when (buffer-file-name buf)
+      (when (and (buffer-file-name buf)
+                 ;; Unless the buffer is displayed in other frames
+                 (eq 1 (length (get-buffer-window-list buf nil t))))
         (kill-buffer buf)))
     ;; delete frame or client depending on the --no-wait command line option
     (cond ((eq proc 'nowait)
@@ -134,7 +137,7 @@ buffers almost the same way no matter when they are opened."
 	         ;; If we're the last frame standing, kill Emacs.
 	         (save-buffers-kill-emacs arg)))
 	      ((processp proc)
-           ;; Delete PROC, including its buffers, terminals and frames
+           ;; Delete PROC, including its buffers(?), terminals and frames
 	       (server-delete-client proc))
           (t (error "Invalid client frame")))))
 
