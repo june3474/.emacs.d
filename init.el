@@ -117,7 +117,8 @@ with emacsclient,i.e., files offered as arguments of emacsclient.
 But the files(buffers) opend afterwards with C-x C-f are not killed and ramain
 buried in the server.
 With re-mapping C-x C-c to this function, we can close emacsclient almost
-the same way as the regular emacs."
+the same way as the regular emacs.
+"
   ;; Should be `interactive' to be mapped to a shourcut key.
   (interactive)
   ;; Ask & save file-visiting buffers
@@ -133,7 +134,7 @@ the same way as the regular emacs."
     (cond ((eq proc 'nowait)
 	       ;; Nowait frames have no client buffer list.
 	       (if (cdr (frame-list))
-               (delete-frame)
+               (delete-frame (selected-frame) t)
 	         ;; If we're the last frame standing, kill Emacs.
 	         (save-buffers-kill-emacs arg)))
 	      ((processp proc)
@@ -141,11 +142,36 @@ the same way as the regular emacs."
 	       (server-delete-client proc))
           (t (error "Invalid client frame")))))
 
+(defun my-handle-delete-frame (event)
+  "Handle delete-frame events from the X server.
+
+The function is called when you click the delete-frame button(upper-right corner
+[X] on Windows). You can advise(defadvice) that command or you can replace it
+with a function that handles that click.
+"
+  (interactive "e")
+  (let* ((frame (posn-window (event-start event))))
+    (select-frame frame)
+    (if (catch 'other-frame
+          (dolist (frame-1 (frame-list))
+            ;; A valid "other" frame is visible, has its `delete-before'
+            ;; parameter unset and is not a child frame.
+            (when (and (not (eq frame-1 frame))
+                       (frame-visible-p frame-1)
+                       (not (frame-parent frame-1))
+                       (not (frame-parameter frame-1 'delete-before)))
+              (throw 'other-frame t))))
+	    (my-server-save-buffers-kill-terminal)
+      ;; Gildea@x.org says it is ok to ask questions before terminating.
+      (save-buffers-kill-emacs))))
+
 (when (daemonp)
   ;; Load `org' beforehand, which takes time to load
   (require 'org)
   ;; remap C-x C-c
   (global-set-key (kbd "C-x C-c") 'my-server-save-buffers-kill-terminal)
+  ;; remap window close button
+  (define-key special-event-map [delete-frame] 'my-handle-delete-frame)
   ;; Bring the newly created frame to front
   (add-hook 'server-after-make-frame-hook
             #'raise-frame)
