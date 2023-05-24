@@ -128,7 +128,10 @@ the same way as the regular emacs.
     (dolist (buf (buffer-list))
       (when (and (buffer-file-name buf)
                  ;; Unless the buffer is displayed in other frames
-                 (eq 1 (length (get-buffer-window-list buf nil t))))
+                 (let ((windows (get-buffer-window-list buf nil t)))
+                   (or (eq 1 (length windows))
+                       (equal (windows
+                               get-buffer-window-list buf nil (selected-frame))))))
         (kill-buffer buf)))
     ;; delete frame or client depending on the --no-wait command line option
     (cond ((eq proc 'nowait)
