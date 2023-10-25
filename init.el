@@ -18,7 +18,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme web-beautify org-bullets ivy))
+   '(org-appear markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme web-beautify org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
@@ -305,8 +305,10 @@ with a function that handles that click.
   (require 'my-org)
   ;; use old style easy-template, i.e., <trigger TAB
   (require 'org-tempo)
+  (require 'org-appear)
   (setq org-todo-keywords '((sequence "TODO(t!)" "WORKING(w!)" "|"
-                                      "CANCELED(c!)" "DONE(d!)")))
+                                      "CANCELED(c!)" "DONE(d!)"))
+        org-pretty-entities t)
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook
                 #'(lambda () (setq org-startup-folded 'content)))
@@ -315,13 +317,17 @@ with a function that handles that click.
 (add-hook 'org-mode-hook
            ;; Applied to derived modes too.
 		  #'(lambda ()
-			 (setq line-spacing 0.16
-			       org-hide-emphasis-markers t
-                   org-log-into-drawer t)
              (my-org-face)
              (my-org-list-bullet)
 			 (org-bullets-mode t)
-             (org-indent-mode t)))
+             (org-indent-mode t)
+             (org-appear-mode t)
+			 (setq line-spacing 0.16
+			       org-hide-emphasis-markers t
+                   org-log-into-drawer t
+                   org-appear-autolinks t
+                   org-appear-autoentities t
+                   org-appear-autokeywords t)))
 
 ;; org-journal mode
 (with-eval-after-load 'org-journal
