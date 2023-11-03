@@ -1,5 +1,16 @@
 ;;; my/config.el --- My package customization
 
+;; recentf-mode
+(use-package recentf
+  :bind
+  ("C-x C-r" . recentf-open-files)
+  :config
+  (recentf-mode 1))
+
+;; expand-region
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+  
 ;; ivy, load now!
 (use-package ivy
   :config
@@ -22,11 +33,11 @@
 
 ;; text-mode
 (use-package text-mode
-  :defer t
-  :config
-  (setq line-spacing 0.15))
+  :hook
+  ;; (setq line-spacing 0.15) doesn't work inside :config
+  (text-mode . (lambda () (setq line-spacing 0.15))))
 
-;; display-line-numbers-mode
+;; display-linenumbers-mode
 (use-package display-line-numbers
   :hook
   (prog-mode emacs-lisp-mode))
@@ -35,7 +46,7 @@
 (use-package elisp-mode
   :init
   (unbind-key "<C-return>" cua-global-keymap)
-  :bind
+  :bind  
   (:map lisp-interaction-mode-map ("<C-return>" . eval-print-last-sexp))
   :config
   ;; Don't truncate outputs with the ellipsis(...)
@@ -92,6 +103,7 @@
         web-mode-enable-auto-opening t
         web-mode-enable-auto-pairing t
         web-mode-enable-auto-indentation t)
+  ;; override fontface
   (face-spec-reset-face 'web-mode-html-tag-bracket-face nil)
   (set-face-attribute 'web-mode-html-attr-name-face nil
                       :foreground 'unspecified
@@ -104,8 +116,7 @@
 (use-package org-indent
   :hook (org-mode . org-indent-mode)
   :config
-  (require 'my/org-indent)
-  (setq line-spacing 0.15))
+  (require 'my/org-indent))
 
 (use-package org-bullets
   :hook org-mode
@@ -129,8 +140,11 @@
         org-appear-autoentities t
         org-appear-autokeywords t))
 
-(use-package org
+(use-package org:
   :defer t
+  :hook
+  ;; (setq line-spacing 0.15) doesn't work inside :config
+  (org-mode . (lambda () (setq line-spacing 0.15)))
   :config
   ;; use old style easy-template, i.e., <trigger TAB
   (require 'org-tempo)
