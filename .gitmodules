@@ -2,6 +2,6 @@
 	path = lisp/org-journal
 	url = https://github.com/june3474/org-journal.git
 	branch = dks
-[submodule "org-appear"]
-	path = org-appear
+[submodule "lisp/org-appear"]
+	path = lisp/org-appear
 	url = https://github.com/awth13/org-appear.git

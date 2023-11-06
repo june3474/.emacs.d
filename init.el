@@ -40,6 +40,10 @@
     (getenv "WSL_DISTRO_NAME")
     (normal-erase-is-backspace-mode 0))
 
+(setq-default initial-scratch-message
+              (concat ";; GNU Emacs (" emacs-version ")\n" 
+                      ";; \"... 그러나 이건 정말일까?\" from 『이유』 by 미미 여사.\n\n"))
+
 
 ;; `load-path' & `custom-theme-directory'
 ;;---------------------------------------------------------------------
