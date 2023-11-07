@@ -4,5 +4,4 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-
 (provide 'my/key-binding)

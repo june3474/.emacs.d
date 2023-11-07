@@ -10,7 +10,25 @@
 ;; expand-region
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
-  
+
+;; which-key
+(use-package which-key
+  :config
+  (which-key-mode 1)
+  (setq which-key-side-window-location 'bottom
+	    which-key-sort-order #'which-key-key-order-alpha
+	    which-key-allow-imprecise-window-fit nil
+	    which-key-sort-uppercase-first nil
+	    which-key-add-column-padding 1
+	    which-key-max-display-columns nil
+	    which-key-min-display-lines 6
+	    which-key-side-window-slot -10
+	    which-key-side-window-max-height 0.25
+	    which-key-idle-delay 0.8
+	    which-key-max-description-length 25
+	    which-key-allow-imprecise-window-fit nil
+	    which-key-separator " → " ))
+
 ;; ivy, load now!
 (use-package ivy
   :config
@@ -67,7 +85,6 @@
   :config
   (setq c-basic-offset 4
         indent-tabs-mode nil)
-  (local-set-key (kbd "RET") 'c-newline-and-indent)
   ;; delete a contiguous block of whitespace with a single key.
   (c-toggle-hungry-state t))
 

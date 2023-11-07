@@ -18,7 +18,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(which-key expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
@@ -40,9 +40,9 @@
     (getenv "WSL_DISTRO_NAME")
     (normal-erase-is-backspace-mode 0))
 
+;; A message you may want to show
 (setq-default initial-scratch-message
-              (concat ";; GNU Emacs (" emacs-version ")\n" 
-                      ";; \"... 그러나 이건 정말일까?\" from 『이유』 by 미미 여사.\n\n"))
+              ";; \"... 그러나 이건 정말일까?\" from 『이유』\n\n")
 
 
 ;; `load-path' & `custom-theme-directory'
@@ -101,6 +101,6 @@
 ;; CONFIGURATION
 ;;--------------------------------------------------------------------
 
-(require 'my/key-binding)
 (require 'my/config)
 (require 'my/misc-funcs)
+(require 'my/key-binding)
