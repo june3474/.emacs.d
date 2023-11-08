@@ -12,22 +12,22 @@
   :bind ("C-=" . er/expand-region))
 
 ;; which-key
-(use-package which-key
-  :config
-  (which-key-mode 1)
-  (setq which-key-side-window-location 'bottom
-	    which-key-sort-order #'which-key-key-order-alpha
-	    which-key-allow-imprecise-window-fit nil
-	    which-key-sort-uppercase-first nil
-	    which-key-add-column-padding 1
-	    which-key-max-display-columns nil
-	    which-key-min-display-lines 6
-	    which-key-side-window-slot -10
-	    which-key-side-window-max-height 0.25
-	    which-key-idle-delay 0.8
-	    which-key-max-description-length 25
-	    which-key-allow-imprecise-window-fit nil
-	    which-key-separator " → " ))
+;; (use-package which-key
+;;   :config
+;;   (which-key-mode 1)
+;;   (setq which-key-side-window-location 'bottom
+;; 	    which-key-sort-order #'which-key-key-order-alpha
+;; 	    which-key-allow-imprecise-window-fit nil
+;; 	    which-key-sort-uppercase-first nil
+;; 	    which-key-add-column-padding 1
+;; 	    which-key-max-display-columns nil
+;; 	    which-key-min-display-lines 6
+;; 	    which-key-side-window-slot -10
+;; 	    which-key-side-window-max-height 0.25
+;; 	    which-key-idle-delay 0.8
+;; 	    which-key-max-description-length 25
+;; 	    which-key-allow-imprecise-window-fit nil
+;; 	    which-key-separator " → " ))
 
 ;; ivy, load now!
 (use-package ivy
@@ -79,8 +79,6 @@
   (add-to-list 'c-default-style '(c-mode . "k&r")))
   
 (use-package cc-mode
-  ;; :defer is necessary because lambda func is not an autoload.
-  ;; https://github.com/jwiegley/use-package/issues/895
   :defer t
   :config
   (setq c-basic-offset 4
@@ -131,7 +129,7 @@
 
 ;; org-mode
 (use-package org-indent
-  :hook (org-mode . org-indent-mode)
+  :hook org-mode
   :config
   (require 'my/org-indent))
 
@@ -147,6 +145,7 @@
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
 (use-package my/org-faces
+  :after org-faces
   :commands my-org-faces
   :hook (org-mode . my-org-faces))
 
@@ -158,12 +157,15 @@
         org-appear-autokeywords t))
 
 (use-package org:
-  :defer t
   :hook
   ;; (setq line-spacing 0.15) doesn't work inside :config
   (org-mode . (lambda () (setq line-spacing 0.15)))
+  ;; :defer is necessary because lambda func is not an autoload.
+  ;; https://github.com/jwiegley/use-package/issues/895
+  :defer t
   :config
   ;; use old style easy-template, i.e., <trigger TAB
+  ;; `org-tempo' has no autoload function nor variable
   (require 'org-tempo)
   (setq org-pretty-entities t
         org-log-into-drawer t)
@@ -187,8 +189,5 @@
         org-journal-time-format ""
         org-journal-find-file 'find-file))
 
-;; daemon mode
-(if (daemonp)
-    (require 'my/config-daemon))
 
 (provide 'my/config)

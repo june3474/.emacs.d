@@ -5,7 +5,6 @@
 (defun my-org-faces ()
   "set org-mode font faces"
   (interactive)
-  (require 'org-faces)
   (set-face-attribute 'org-level-1 nil :height 1.25 :weight 'bold)
   (set-face-attribute 'org-level-2 nil :height 1.2 :weight 'bold)
   (set-face-attribute 'org-level-3 nil :height 1.15 :foreground "PaleGreen")

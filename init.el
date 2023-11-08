@@ -18,7 +18,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(which-key expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
@@ -88,8 +88,8 @@
 ;; package
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa-stable" . "https://stable.melpa.org/packages/") t)
- ;; export load-path and autoloads of installed packages, but does not load packages.
+			 '("melpa" . "https://melpa.org/packages/") t)
+;; export load-path and autoloads of installed packages, but does not load packages.
 (package-initialize)
 
 ;; use-package
@@ -102,5 +102,6 @@
 ;;--------------------------------------------------------------------
 
 (require 'my/config)
+(require 'my/config-daemon)
 (require 'my/misc-funcs)
 (require 'my/key-binding)
