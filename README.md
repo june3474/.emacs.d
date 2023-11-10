@@ -3,8 +3,11 @@
 ## When clonning first
 
 git clone
+
 git submodule init
+
 git submodule update
+
 
 OR
 
