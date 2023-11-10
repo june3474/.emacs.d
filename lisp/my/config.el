@@ -11,24 +11,6 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
-;; which-key
-;; (use-package which-key
-;;   :config
-;;   (which-key-mode 1)
-;;   (setq which-key-side-window-location 'bottom
-;; 	    which-key-sort-order #'which-key-key-order-alpha
-;; 	    which-key-allow-imprecise-window-fit nil
-;; 	    which-key-sort-uppercase-first nil
-;; 	    which-key-add-column-padding 1
-;; 	    which-key-max-display-columns nil
-;; 	    which-key-min-display-lines 6
-;; 	    which-key-side-window-slot -10
-;; 	    which-key-side-window-max-height 0.25
-;; 	    which-key-idle-delay 0.8
-;; 	    which-key-max-description-length 25
-;; 	    which-key-allow-imprecise-window-fit nil
-;; 	    which-key-separator " → " ))
-
 ;; ivy, load now!
 (use-package ivy
   :config
@@ -53,6 +35,7 @@
 (use-package text-mode
   :hook
   ;; (setq line-spacing 0.15) doesn't work inside :config
+  ;; text-mode is the grand parent mode of org-mode
   (text-mode . (lambda () (setq line-spacing 0.15))))
 
 ;; display-linenumbers-mode
@@ -128,8 +111,14 @@
                       :inherit font-lock-function-name-face))
 
 ;; org-mode
+
+(use-package org-faces
+  :defer t
+  :config
+  (require 'my/org-faces))
+
 (use-package org-indent
-  :hook org-mode
+  :hook org-mode  ;; imply defer
   :config
   (require 'my/org-indent))
 
@@ -144,11 +133,6 @@
    '(("^[[:space:]]*\\(-\\) "
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
-(use-package my/org-faces
-  :after org-faces
-  :commands my-org-faces
-  :hook (org-mode . my-org-faces))
-
 (use-package org-appear  
   :hook org-mode
   :config
@@ -156,23 +140,28 @@
         org-appear-autoentities t
         org-appear-autokeywords t))
 
-(use-package org:
-  :hook
-  ;; (setq line-spacing 0.15) doesn't work inside :config
-  (org-mode . (lambda () (setq line-spacing 0.15)))
-  ;; :defer is necessary because lambda func is not an autoload.
-  ;; https://github.com/jwiegley/use-package/issues/895
-  :defer t
-  :config
+;; `eval-after-load' runs once after an elisp library be loaded.
+;; whereas `mode-hook' runs on every buffer where the mode is enabled.
+;; `eval-after-load' runs first and `mode-hook' later.
+;;
+;; Separate the configurations from `use-package' in order to apply the same
+;; config, regardless that `org' is loaded early in the daemon mode--as shown
+;; in the below-- or loaded later in non-daemon mode.
+(with-eval-after-load 'org
+  (require 'org-faces)
+  (require 'org-indent)
+  (require 'org-bullets)
+  (require 'org-appear)
   ;; use old style easy-template, i.e., <trigger TAB
   ;; `org-tempo' has no autoload function nor variable
   (require 'org-tempo)
-  (setq org-pretty-entities t
-        org-log-into-drawer t)
-  (if (daemonp)
-      (add-hook 'server-after-make-frame-hook
-                #'(lambda () (setq org-startup-folded 'content)))
-    (setq org-startup-folded 'content)))
+  (setq org-startup-folded 'content
+        org-hide-emphasis-markers t
+        org-pretty-entities t
+        org-log-into-drawer t))
+
+(use-package org
+  :if (daemonp))
 
 ;; org-journal-mode
 (use-package my/org-journal

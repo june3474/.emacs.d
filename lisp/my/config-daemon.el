@@ -108,9 +108,6 @@ with a function that handles that click.
 ;;--------------------------------------------
 
 (when (daemonp)
-  ;; Load big `org' and `my/org-journal' now.
-  (require 'org)
-  (require 'my/org-journal)
   ;; Customize the closing behavior
   (add-hook 'kill-buffer-query-functions #'not-windowed-on-other-frame)
   (advice-add 'server-save-buffers-kill-terminal

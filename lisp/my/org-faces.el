@@ -32,4 +32,9 @@
     "Face to use for todo keyword 'DOING'"
     :group 'org-faces))
 
+;;--------------------------------------------
+
+(my-org-faces)
+
+
 (provide 'my/org-faces)

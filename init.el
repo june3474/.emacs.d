@@ -36,7 +36,10 @@
 
 ;; Set window(frame) title
 (setq-default frame-title-format
-              '(:eval (format "Emacs-%s: %s"
+              '(:eval (format "%s-%s: %s"
+                              (if (daemonp)
+                                  "Emacsclient"
+                                "Emacs")
                               emacs-version
                               (or buffer-file-name
                                   dired-directory
