@@ -34,6 +34,14 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; Set window(frame) title
+(setq-default frame-title-format
+              '(:eval (format "Emacs-%s: %s"
+                              emacs-version
+                              (or buffer-file-name
+                                  dired-directory
+                                  (buffer-name)))))
+
 ;; In the text-console, i.e., not in a graphic mode like X, and not on WSL
 ;; adjust the BACKSPACE key's behavior.
 (or (display-graphic-p)
