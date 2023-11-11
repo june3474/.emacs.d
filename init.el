@@ -25,7 +25,8 @@
  '(tab-width 4)
  '(text-mode-hook '(text-mode-hook-identify))
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style 'forward nil (uniquify)))
+ '(uniquify-buffer-name-style 'forward nil (uniquify))
+ '(use-short-answers t))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -113,6 +114,7 @@
 ;;--------------------------------------------------------------------
 
 (require 'my/config)
-(require 'my/config-daemon)
+(when (daemonp)
+  (require 'my/config-daemon))
 (require 'my/misc-funcs)
 (require 'my/key-binding)

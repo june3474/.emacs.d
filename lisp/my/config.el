@@ -1,6 +1,6 @@
 ;;; my/config.el --- My package customization
 
-;;; recentf-mode
+;;; recentf
 (use-package recentf
   :bind
   ("C-x C-r" . recentf-open-files)
@@ -43,7 +43,7 @@
   :hook
   (prog-mode emacs-lisp-mode))
 
-;;; emacs-lisp-mode, e.g., *scratch* buffer
+;;; elisp mode, e.g., *scratch* buffer
 (use-package elisp-mode
   :init
   (unbind-key "<C-return>" cua-global-keymap)
@@ -59,17 +59,17 @@
   :defer t
   :config
   ;; classic Kernighan and Ritchie style instead gnu.
-  (add-to-list 'c-default-style '(c-mode . "k&r")))
-  
+  (add-to-list 'c-default-style '(c-mode . "k&r"))
+  (setq c-basic-offset 4))
+
 (use-package cc-mode
   :defer t
   :config
-  (setq c-basic-offset 4
-        indent-tabs-mode nil)
+  (setq indent-tabs-mode nil)
   ;; delete a contiguous block of whitespace with a single key.
   (c-toggle-hungry-state t))
 
-;;; python-mode
+;;; python mode
 (use-package python
   :defer t
   :config
@@ -110,67 +110,52 @@
                       :foreground 'unspecified
                       :inherit font-lock-function-name-face))
 
-;;; org-mode
-
+;;; org mode
 (use-package org-faces
   :defer t
   :config
   (require 'my/org-faces))
 
 (use-package org-indent
-  :defer t
+  :hook org-mode  ;; imply defer
   :config
   (require 'my/org-indent))
 
 (use-package org-bullets
-  :defer t
+  :hook org-mode
+  :init
+  (add-hook 'org-mode-hook
+            ;; display the list bullet with '▸'."
+            #'(lambda ()
+                (font-lock-add-keywords
+                 nil
+                 ;; lines starting with spaces, followed by a dash"
+                 '(("^[[:space:]]*\\(-\\) "
+	                (0 (prog1 () (compose-region (match-beginning 1)
+                                                 (match-end 1) "▸"))))))))  
   :config
-  (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•"))
-  ;; display the list bullet with '▸'."
-  (font-lock-add-keywords
-   nil
-   ;; lines starting with spaces, followed by a dash"
-   '(("^[[:space:]]*\\(-\\) "
-	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
+  (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•")))
 
 (use-package org-appear  
+  :hook org-mode
+  :config
+  (setq  org-appear-trigger 'on-change
+         org-appear-autolinks t
+         org-appear-autoentities t
+         org-appear-autokeywords t))
+
+(use-package org
   :defer t
   :config
-  (setq org-appear-autolinks t
-        org-appear-autoentities t
-        org-appear-autokeywords t))
-
-;; Separate the configurations in order to apply the same configurations,
-;; regardless that `org' is loaded early in the daemon mode--as shown in
-;; the below-- or loaded later in non-daemon mode.
-;;
-;; `eval-after-load' runs once after an elisp library be loaded.
-;; whereas `mode-hook' runs on every buffer where the mode is enabled.
-;; `eval-after-load' runs first and `mode-hook' later.
-(with-eval-after-load 'org
-  (require 'org-faces)
-  (require 'org-indent)
-  (require 'org-bullets)
-  (require 'org-appear)
   ;; use old style easy-template, i.e., <trigger TAB
   ;; `org-tempo' has no autoload function nor variable
   (require 'org-tempo)
-  ;; mode settings would be better to go on the buffer-basis with a hook
-  (add-hook 'org-mode-hook
-            #'(lambda ()
-                (org-indent-mode 1)
-                (org-bullets-mode 1)
-                (org-appear-mode 1)))
   (setq org-startup-folded 'content
         org-hide-emphasis-markers t
         org-pretty-entities t
-        org-log-into-drawer t))
+        org-log-into-drawer t))  
 
-;; load `org', an old-school way rather than use-package 
-(when (daemonp)
-  (require 'org))
-
-;;; org-journal-mode
+;;; org-journal mode
 (use-package my/org-journal
   :bind
   ("C-c C-j" . new-journal)
