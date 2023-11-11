@@ -1,17 +1,17 @@
 ;;; my/config.el --- My package customization
 
-;; recentf-mode
+;;; recentf-mode
 (use-package recentf
   :bind
   ("C-x C-r" . recentf-open-files)
   :config
   (recentf-mode 1))
 
-;; expand-region
+;;; expand-region
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
-;; ivy, load now!
+;;; ivy, load now!
 (use-package ivy
   :config
   (setq ivy-use-virtual-buffers t
@@ -19,7 +19,7 @@
         ivy-on-del-error-function #'ignore)
   (ivy-mode 1))
 
-;; visual-line mode
+;;; visual-line mode
 (use-package simple
   :hook
   (text-mode . visual-line-mode)
@@ -31,19 +31,19 @@
   (modify-category-entry '(?, . ?/) ?|)
   (modify-category-entry ?\; ?|))
 
-;; text-mode
+;;; text-mode
 (use-package text-mode
   :hook
   ;; (setq line-spacing 0.15) doesn't work inside :config
   ;; text-mode is the grand parent mode of org-mode
   (text-mode . (lambda () (setq line-spacing 0.15))))
 
-;; display-linenumbers-mode
+;;; display-linenumbers-mode
 (use-package display-line-numbers
   :hook
   (prog-mode emacs-lisp-mode))
 
-;; emacs-lisp-mode, e.g., *scratch* buffer
+;;; emacs-lisp-mode, e.g., *scratch* buffer
 (use-package elisp-mode
   :init
   (unbind-key "<C-return>" cua-global-keymap)
@@ -54,7 +54,7 @@
   (setq eval-expression-print-length nil
         eval-expression-print-level nil))
 
-;; C & C++ mode
+;;; C & C++ mode
 (use-package cc-vars
   :defer t
   :config
@@ -69,13 +69,13 @@
   ;; delete a contiguous block of whitespace with a single key.
   (c-toggle-hungry-state t))
 
-;; python-mode
+;;; python-mode
 (use-package python
   :defer t
   :config
   (setq python-indent 4))
 
-;; web-mode
+;;; web-mode
 ;; This mode doesn't seem to help much with normal html files.
 ;; Shame on that emacs doesn't have a good html formatter yet.
 (use-package web-mode
@@ -110,7 +110,7 @@
                       :foreground 'unspecified
                       :inherit font-lock-function-name-face))
 
-;; org-mode
+;;; org-mode
 
 (use-package org-faces
   :defer t
@@ -118,12 +118,12 @@
   (require 'my/org-faces))
 
 (use-package org-indent
-  :hook org-mode  ;; imply defer
+  :defer t
   :config
   (require 'my/org-indent))
 
 (use-package org-bullets
-  :hook org-mode
+  :defer t
   :config
   (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•"))
   ;; display the list bullet with '▸'."
@@ -134,19 +134,19 @@
 	  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸")))))))
 
 (use-package org-appear  
-  :hook org-mode
+  :defer t
   :config
   (setq org-appear-autolinks t
         org-appear-autoentities t
         org-appear-autokeywords t))
 
+;; Separate the configurations in order to apply the same configurations,
+;; regardless that `org' is loaded early in the daemon mode--as shown in
+;; the below-- or loaded later in non-daemon mode.
+;;
 ;; `eval-after-load' runs once after an elisp library be loaded.
 ;; whereas `mode-hook' runs on every buffer where the mode is enabled.
 ;; `eval-after-load' runs first and `mode-hook' later.
-;;
-;; Separate the configurations from `use-package' in order to apply the same
-;; config, regardless that `org' is loaded early in the daemon mode--as shown
-;; in the below-- or loaded later in non-daemon mode.
 (with-eval-after-load 'org
   (require 'org-faces)
   (require 'org-indent)
@@ -155,15 +155,22 @@
   ;; use old style easy-template, i.e., <trigger TAB
   ;; `org-tempo' has no autoload function nor variable
   (require 'org-tempo)
+  ;; mode settings would be better to go on the buffer-basis with a hook
+  (add-hook 'org-mode-hook
+            #'(lambda ()
+                (org-indent-mode 1)
+                (org-bullets-mode 1)
+                (org-appear-mode 1)))
   (setq org-startup-folded 'content
         org-hide-emphasis-markers t
         org-pretty-entities t
         org-log-into-drawer t))
 
-(use-package org
-  :if (daemonp))
+;; load `org', an old-school way rather than use-package 
+(when (daemonp)
+  (require 'org))
 
-;; org-journal-mode
+;;; org-journal-mode
 (use-package my/org-journal
   :bind
   ("C-c C-j" . new-journal)
