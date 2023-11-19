@@ -10,7 +10,6 @@
  '(cua-mode t nil (cua-base))
  '(custom-safe-themes
    '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7" "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0" default))
- '(default-major-mode 'text-mode t)
  '(delete-selection-mode t)
  '(ediff-split-window-function 'split-window-horizontally)
  '(indent-tabs-mode nil)
