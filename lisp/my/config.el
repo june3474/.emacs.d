@@ -38,6 +38,28 @@
     (setq ivy-initial-inputs-alist nil)
     (counsel-mode 1)))
 
+;;; centaur-tabs
+(use-package centaur-tabs
+  :demand
+  :hook
+  (dired-mode . centaur-tabs-local-mode)
+  (dashboard-mode . centaur-tabs-local-mode)
+  (term-mode . centaur-tabs-local-mode)
+  (calendar-mode . centaur-tabs-local-mode)
+  (org-agenda-mode . centaur-tabs-local-mode)
+  :config
+  (centaur-tabs-change-fonts "Monospace" 110)
+  (set-face-attribute 'centaur-tabs-selected nil :weight 'semi-bold)
+  (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
+  (setq centaur-tabs-height 30
+        ;; centaur-tabs-style "wave"
+        centaur-tabs-set-icons t
+        centaur-tabs-set-bar 'under
+        x-underline-at-descent-line t
+        centaur-tabs-gray-out-icons 'buffer
+        centaur-tabs-set-modified-marker t))
+
 ;;; visual-line mode
 (use-package simple
   :hook

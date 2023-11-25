@@ -17,7 +17,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
