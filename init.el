@@ -17,7 +17,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
@@ -93,6 +93,9 @@
     (add-hook 'server-after-make-frame-hook #'my-set-hangul-font)
   (my-set-hangul-font))
 
+;; Underline at descent position, not baseline position
+(setq x-underline-at-descent-line t)
+
 
 ;; BASE PACKAGES
 ;;--------------------------------------------------------------------
@@ -117,3 +120,6 @@
   (require 'my/config-daemon))
 (require 'my/misc-funcs)
 (require 'my/key-binding)
+
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))

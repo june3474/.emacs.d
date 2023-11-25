@@ -11,13 +11,32 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
-;;; ivy, load now!
+;;; diminish
+(use-package diminish)
+
+;;; ivy & counsel
 (use-package ivy
+  :demand t  ;; load Now!
   :config
   (setq ivy-use-virtual-buffers t
         ivy-count-format "(%d/%d) "
         ivy-on-del-error-function #'ignore)
-  (ivy-mode 1))
+  (ivy-mode 1)
+  (use-package counsel
+    :demand t
+    :bind (("M-x" . counsel-M-x)
+           ("C-x b" . counsel-ibuffer)
+           ("C-x C-f" . counsel-find-file)
+           ;; ("C-M-j" . counsel-switch-buffer)
+           ("C-M-l" . counsel-imenu)
+           :map minibuffer-local-map
+           ("C-r" . 'counsel-minibuffer-history))
+    :custom
+    (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+    :config
+    ;; Don't start searches with ^   
+    (setq ivy-initial-inputs-alist nil)
+    (counsel-mode 1)))
 
 ;;; visual-line mode
 (use-package simple
@@ -55,19 +74,22 @@
         eval-expression-print-level nil))
 
 ;;; C & C++ mode
-(use-package cc-vars
-  :defer t
-  :config
-  ;; classic Kernighan and Ritchie style instead gnu.
-  (add-to-list 'c-default-style '(c-mode . "k&r"))
-  (setq c-basic-offset 4))
-
 (use-package cc-mode
   :defer t
+  :init
+  (use-package cc-vars
+    :defer t
+    :config
+    ;; classic Kernighan and Ritchie style instead gnu.
+    (add-to-list 'c-default-style '(c-mode . "k&r"))
+    (setq c-basic-offset 4))
+  (use-package cc-cmds
+    :defer t
+    :config
+    ;; delete a contiguous block of whitespace with a single key.
+    (c-toggle-hungry-state 1))
   :config
-  (setq indent-tabs-mode nil)
-  ;; delete a contiguous block of whitespace with a single key.
-  (c-toggle-hungry-state t))
+  (setq indent-tabs-mode nil))
 
 ;;; python mode
 (use-package python
