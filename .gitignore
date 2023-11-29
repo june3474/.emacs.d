@@ -6,3 +6,4 @@ recentf
 session.*
 tramp
 server/
+org-persist/

@@ -17,7 +17,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode markdown-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(all-the-icons-ivy all-the-icons centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
@@ -34,6 +34,8 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; BASIC SETUP
+;;------------------------------------------------------------------------------
 ;; Set window(frame) title
 (setq-default frame-title-format
               '(:eval (format "%s-%s: %s"
@@ -51,13 +53,23 @@
     (getenv "WSL_DISTRO_NAME")
     (normal-erase-is-backspace-mode 0))
 
-;; A message you may want to show
+;; A message you may want to show in *scratch* buffer
 (setq-default initial-scratch-message
               ";; \"... 그러나 이건 정말일까?\" from 『이유』\n\n")
 
+;; Disable beep
+(setq ring-bell-function
+      #'(lambda()
+          (unless (memq this-command
+                        '(isearch-abort abort-recursive-edit exit-minibuffer
+                          keyboard-quit mwheel-scroll down up next-line
+                          previous-line backward-char forward-char
+                          cua-scroll-up cua-scroll-down))
+            (ding))))
+
 
 ;; `load-path' & `custom-theme-directory'
-;;---------------------------------------------------------------------
+;;------------------------------------------------------------------------------
 (let ((lisp-dir (concat user-emacs-directory (file-name-as-directory "lisp")))
       (theme-dir (concat user-emacs-directory (file-name-as-directory "theme"))))
   (when (file-directory-p lisp-dir)
@@ -70,7 +82,7 @@
 
 
 ;; LANGUAGE & FONT
-;;--------------------------------------------------------------------
+;;------------------------------------------------------------------------------
  ;; Set default language and input method to Korean.
  ;; This enables to directly input Hangul with Hangul IME in -nw emacs.
 (set-language-environment "Korean")
@@ -98,12 +110,15 @@
 
 
 ;; BASE PACKAGES
-;;--------------------------------------------------------------------
+;;------------------------------------------------------------------------------
 ;; package
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "https://melpa.org/packages/") t)
-;; export load-path and autoloads of installed packages, but does not load packages.
+			 '("melpa" . "https://melpa.org/packages/"))
+;; allow upgrading built-in packages
+(setq package-install-upgrade-built-in t)
+;; export load-path and autoloads of installed packages,b
+;; but does not load packages.
 (package-initialize)
 
 ;; use-package
@@ -113,12 +128,12 @@
 
 
 ;; CONFIGURATION
-;;--------------------------------------------------------------------
+;;------------------------------------------------------------------------------
 
+(require 'my/misc-funcs)
 (require 'my/config)
 (when (daemonp)
   (require 'my/config-daemon))
-(require 'my/misc-funcs)
 (require 'my/key-binding)
 
 ;; Make gc pauses faster by decreasing the threshold.

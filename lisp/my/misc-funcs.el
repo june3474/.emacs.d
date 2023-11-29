@@ -7,12 +7,14 @@
   (aset buffer-display-table ?\^M []))
 
 (defun save-and-compile ()
-   "Save current buffer and compile. Bind key to F9"
-   (interactive)
-   ;; Don't make a backup file
-   (save-buffer 0)
-   (compile "make -k"))
-(global-set-key [(f9)] 'my-save-and-compile)
+  "Save current buffer and compile. Bind key to F9"
+  (interactive)
+  ;; Don't make a backup file
+  (save-buffer 0)
+  (if (equal major-mode 'emacs-lisp-mode)
+      (byte-compile-file (buffer-file-name))
+    (compile "make -k")))
+(global-set-key [(f9)] 'save-and-compile)
 
 (defun revert-buffer-with-euc-kr ()
   "set the encoding of the current buffer to euc-kr. Bind key to F12"

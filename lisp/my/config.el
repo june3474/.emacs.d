@@ -14,21 +14,31 @@
 ;;; diminish
 (use-package diminish)
 
+;;; all-the-icons
+(use-package all-the-icons
+  :if (or (display-graphic-p) (daemonp))
+  :config
+  (setq inhibit-compacting-font-caches t
+        all-the-icons-scale-factor 1.0))
+
 ;;; ivy & counsel
 (use-package ivy
   :demand t  ;; load Now!
   :config
   (setq ivy-use-virtual-buffers t
         ivy-count-format "(%d/%d) "
-        ivy-on-del-error-function #'ignore)
+        ivy-on-del-error-function #'ignore
+        ivy-read-action-function #'ivy-read-action-ivy)
   (ivy-mode 1)
   (use-package counsel
+    :if (package-installed-p 'counsel)
     :demand t
     :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-ibuffer)
+           ("C-x b" . counsel-switch-buffer)
+           ("C-x l" . counsel-locate)
            ("C-x C-f" . counsel-find-file)
-           ;; ("C-M-j" . counsel-switch-buffer)
-           ("C-M-l" . counsel-imenu)
+           ("C-x C-r" . counsel-recentf)
+           ;; ("C-M-l" . counsel-imenu)
            :map minibuffer-local-map
            ("C-r" . 'counsel-minibuffer-history))
     :custom
@@ -36,9 +46,13 @@
     :config
     ;; Don't start searches with ^   
     (setq ivy-initial-inputs-alist nil)
-    (counsel-mode 1)))
+    (counsel-mode 1))
+  (use-package all-the-icons-ivy
+    :if (package-installed-p 'all-the-icons-ivy)
+    :config
+    (all-the-icons-ivy-setup)
+    (add-to-list 'all-the-icons-ivy-buffer-commands #'counsel-switch-buffer)))
 
-;;; centaur-tabs
 (use-package centaur-tabs
   :demand
   :hook
@@ -55,6 +69,8 @@
   (setq centaur-tabs-height 30
         ;; centaur-tabs-style "wave"
         centaur-tabs-set-icons t
+        centaur-tabs-icon-scale-factor 0.95
+        centaur-tabs-icon-v-adjust 0.05
         centaur-tabs-set-bar 'under
         x-underline-at-descent-line t
         centaur-tabs-gray-out-icons 'buffer
@@ -105,11 +121,6 @@
     ;; classic Kernighan and Ritchie style instead gnu.
     (add-to-list 'c-default-style '(c-mode . "k&r"))
     (setq c-basic-offset 4))
-  (use-package cc-cmds
-    :defer t
-    :config
-    ;; delete a contiguous block of whitespace with a single key.
-    (c-toggle-hungry-state 1))
   :config
   (setq indent-tabs-mode nil))
 
@@ -175,7 +186,7 @@
                  nil
                  ;; lines starting with spaces, followed by a dash"
                  '(("^[[:space:]]*\\(-\\) "
-	                (0 (prog1 () (compose-region (match-beginning 1)
+                    (0 (prog1 () (compose-region (match-beginning 1)
                                                  (match-end 1) "▸"))))))))  
   :config
   (setq org-bullets-bullet-list '("▌" "□" "○" "−" "•")))
