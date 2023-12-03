@@ -14,14 +14,14 @@
   (if (equal major-mode 'emacs-lisp-mode)
       (byte-compile-file (buffer-file-name))
     (compile "make -k")))
-(global-set-key [(f9)] 'save-and-compile)
+(global-set-key (kbd "<f9>") 'save-and-compile)
 
 (defun revert-buffer-with-euc-kr ()
   "set the encoding of the current buffer to euc-kr. Bind key to F12"
   (interactive)
   (let ((coding-system-for-read 'korean-iso-8bit))
     (revert-buffer t t)))
-(global-set-key [(f12)] 'revert-buffer-with-euc-kr)
+(global-set-key (kbd "<f12>") 'revert-buffer-with-euc-kr)
 
 (defun enable-babel ()
   "Enabel source block evaluation"

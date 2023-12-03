@@ -38,6 +38,9 @@
            ("C-x l" . counsel-locate)
            ("C-x C-f" . counsel-find-file)
            ("C-x C-r" . counsel-recentf)
+           ;; swiper
+           ("C-s" . 'swiper-isearch)
+           ("C-r" . 'swiper-isearch-backward)
            ;; ("C-M-l" . counsel-imenu)
            :map minibuffer-local-map
            ("C-r" . 'counsel-minibuffer-history))
@@ -118,7 +121,7 @@
   (use-package cc-vars
     :defer t
     :config
-    ;; classic Kernighan and Ritchie style instead gnu.
+    ;; classic Kernighan and Ritchie style instead of gnu.
     (add-to-list 'c-default-style '(c-mode . "k&r"))
     (setq c-basic-offset 4))
   :config
@@ -214,7 +217,6 @@
 (use-package my/org-journal
   :bind
   ("C-c C-j" . new-journal)
-  ;; load immediatly when daemon mode
   :config
   (setq org-journal-dir "~/Documents/journal/"
         ;; org-journal-dir "/ssh:dks@jupiter:/home/dks/Documents/journal/"
