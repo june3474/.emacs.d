@@ -7,3 +7,4 @@ session.*
 tramp
 server/
 org-persist/
+bookmarks

@@ -1,11 +1,30 @@
 ;;; my/config.el --- My package customization
 
-;;; recentf
+;;; recentf - builtin
 (use-package recentf
+  :demand
   :bind
   ("C-x C-r" . recentf-open-files)
   :config
   (recentf-mode 1))
+
+;;; windmove - builtin
+(use-package windmove
+  :demand
+  :bind
+  (("M-<up>" . backward-paragraph)  ;; Originaly, mapped to C-up
+   ("M-<down>" . forward-paragraph))
+  :config
+  (windmove-default-keybindings 'control))
+
+;;; buffer-move
+(use-package buffer-move
+  :demand
+  :bind
+  (("C-S-<up>" . buf-move-up)
+   ("C-S-<down>" . buf-move-down)
+   ("C-S-<left>" . buf-move-left)
+   ("C-S-<right>" . buf-move-right)))
 
 ;;; expand-region
 (use-package expand-region
@@ -23,7 +42,9 @@
 
 ;;; ivy & counsel
 (use-package ivy
-  :demand t  ;; load Now!
+  :demand  ;; load Now!
+  :bind (:map ivy-minibuffer-map
+         ([escape] . minibuffer-keyboard-quit))
   :config
   (setq ivy-use-virtual-buffers t
         ivy-count-format "(%d/%d) "
@@ -32,7 +53,7 @@
   (ivy-mode 1)
   (use-package counsel
     :if (package-installed-p 'counsel)
-    :demand t
+    :demand
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-switch-buffer)
            ("C-x l" . counsel-locate)
