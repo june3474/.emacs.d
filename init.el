@@ -11,6 +11,7 @@
  '(custom-safe-themes
    '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7" "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0" default))
  '(delete-selection-mode t)
+ '(dired-listing-switches "-ahlv --group-directories-first")
  '(ediff-split-window-function 'split-window-horizontally)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -34,7 +35,7 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; BASIC SETUP
+;;; BASIC SETUP
 ;;------------------------------------------------------------------------------
 ;; Set window(frame) title
 (setq-default frame-title-format
@@ -55,7 +56,7 @@
 
 ;; A message you may want to show in *scratch* buffer
 (setq-default initial-scratch-message
-              ";; \"... 그러나 이건 정말일까?\" from 『이유』\n\n")
+              ";; \"... 그러나 이건 정말일까?\" by 미미여사\n\n")
 
 ;; Disable beep
 (setq ring-bell-function
@@ -68,7 +69,7 @@
             (ding))))
 
 
-;; `load-path' & `custom-theme-directory'
+;;; `load-path' & `custom-theme-directory'
 ;;------------------------------------------------------------------------------
 (let ((lisp-dir (concat user-emacs-directory (file-name-as-directory "lisp")))
       (theme-dir (concat user-emacs-directory (file-name-as-directory "theme"))))
@@ -81,7 +82,7 @@
     (add-to-list 'custom-theme-load-path theme-dir)))
 
 
-;; LANGUAGE & FONT
+;;; LANGUAGE & FONT
 ;;------------------------------------------------------------------------------
  ;; Set default language and input method to Korean.
  ;; This enables to directly input Hangul with Hangul IME in -nw emacs.
@@ -109,7 +110,7 @@
 (setq x-underline-at-descent-line t)
 
 
-;; BASE PACKAGES
+;;; BASE PACKAGES
 ;;------------------------------------------------------------------------------
 ;; package
 (require 'package)
@@ -127,7 +128,7 @@
   (setq use-package-verbose t))
 
 
-;; CONFIGURATION
+;;; CONFIGURATION
 ;;------------------------------------------------------------------------------
 
 (require 'my/misc-funcs)
@@ -136,5 +137,5 @@
   (require 'my/config-daemon))
 (require 'my/key-binding)
 
-;; Make gc pauses faster by decreasing the threshold.
+;;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))

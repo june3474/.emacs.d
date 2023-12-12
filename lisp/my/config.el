@@ -12,8 +12,11 @@
 (use-package windmove
   :demand
   :bind
-  (("M-<up>" . backward-paragraph)  ;; Originaly, mapped to C-up
-   ("M-<down>" . forward-paragraph))
+  (;; remap `backward-paragraph' which is originally mapped to C-up 
+   ("M-<up>" . backward-paragraph)
+   ("M-<down>" . forward-paragraph)
+   :map windmove-mode-map
+   ("C-<delete>" . delete-window))
   :config
   (windmove-default-keybindings 'control))
 
@@ -21,10 +24,10 @@
 (use-package buffer-move
   :demand
   :bind
-  (("C-S-<up>" . buf-move-up)
-   ("C-S-<down>" . buf-move-down)
-   ("C-S-<left>" . buf-move-left)
-   ("C-S-<right>" . buf-move-right)))
+  (("<C-S-up>" . buf-move-up)
+   ("<C-S-down>" . buf-move-down)
+   ("<C-S-left>" . buf-move-left)
+   ("<C-S-right>" . buf-move-right)))
 
 ;;; expand-region
 (use-package expand-region
@@ -59,11 +62,12 @@
            ("C-x l" . counsel-locate)
            ("C-x C-f" . counsel-find-file)
            ("C-x C-r" . counsel-recentf)
+           ("C-x C-d" . counsel-dired)
            ;; swiper
            ("C-s" . 'swiper-isearch)
-           ("C-r" . 'swiper-isearch-backward)
-           ;; ("C-M-l" . counsel-imenu)
-           :map minibuffer-local-map
+           ;; Use C-p for searching backward 
+           ;; ("C-r" . 'swiper-isearch-backward)
+            :map minibuffer-local-map
            ("C-r" . 'counsel-minibuffer-history))
     :custom
     (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
@@ -229,10 +233,16 @@
   ;; use old style easy-template, i.e., <trigger TAB
   ;; `org-tempo' has no autoload function nor variable
   (require 'org-tempo)
+  ;; settings
   (setq org-startup-folded 'content
         org-hide-emphasis-markers t
         org-pretty-entities t
-        org-log-into-drawer t))  
+        org-log-into-drawer t)
+  ;; respect buffer-move key-binding
+  (unbind-key "<C-S-up>" org-mode-map)
+  (unbind-key "<C-S-down>" org-mode-map)
+  (unbind-key "<C-S-left>" org-mode-map)
+  (unbind-key "<C-S-right>" org-mode-map))
 
 ;;; org-journal mode
 (use-package my/org-journal

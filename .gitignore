@@ -8,3 +8,4 @@ tramp
 server/
 org-persist/
 bookmarks
+transient/
