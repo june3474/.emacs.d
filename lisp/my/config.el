@@ -38,10 +38,15 @@
 
 ;;; all-the-icons
 (use-package all-the-icons
-  :if (or (display-graphic-p) (daemonp))
+  ; :if (or (display-graphic-p) (daemonp))
+  :if (display-graphic-p)
   :config
   (setq inhibit-compacting-font-caches t
         all-the-icons-scale-factor 1.0))
+
+;;; all-the-icons-ivy
+(use-package all-the-icons-ivy
+  :if (display-graphic-p))
 
 ;;; ivy & counsel
 (use-package ivy
@@ -82,6 +87,7 @@
     (add-to-list 'all-the-icons-ivy-buffer-commands #'counsel-switch-buffer)))
 
 (use-package centaur-tabs
+  :if (display-graphic-p)
   :demand
   :hook
   (dired-mode . centaur-tabs-local-mode)

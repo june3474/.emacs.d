@@ -23,7 +23,7 @@
 This function is supposed to be run as a `org-journal-after-entry-create-hook'"
   ;; The value of `org-journal-time-prefix' is "** " 
   (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
-        (templates '("Tennis" "Guitar" "Computer & Programming")))
+        (templates '("Work" "Tennis" "대구 살이" "Guitar" "Computer & Programming")))
     ;; Current position would be at the end of the subtree of the current day's
     ;; heading or (point-max).
     (save-restriction

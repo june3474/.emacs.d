@@ -55,8 +55,8 @@
     (normal-erase-is-backspace-mode 0))
 
 ;; A message you may want to show in *scratch* buffer
-(setq-default initial-scratch-message
-              ";; \"... 그러나 이건 정말일까?\" by 미미여사\n\n")
+;; (setq-default initial-scratch-message
+;;               ";; \"... 그러나 이건 정말일까?\" by 미미여사\n\n")
 
 ;; Disable beep
 (setq ring-bell-function
