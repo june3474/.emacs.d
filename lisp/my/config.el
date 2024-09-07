@@ -33,6 +33,10 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
+;;; ws-butler
+(use-package ws-butler
+  :hook (prog-mode . ws-butler-mode))
+
 ;;; diminish
 (use-package diminish)
 
