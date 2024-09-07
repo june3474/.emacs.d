@@ -68,16 +68,21 @@
                           cua-scroll-up cua-scroll-down))
             (ding))))
 
+;; Untabify before saving if indent-tabs-mode is off
+(add-hook 'before-save-hook 
+         (lambda () (if (not indent-tabs-mode)
+                        (untabify (point-min) (point-max)))
+                     nil))
 
 ;;; `load-path' & `custom-theme-directory'
 ;;------------------------------------------------------------------------------
 (let ((lisp-dir (concat user-emacs-directory (file-name-as-directory "lisp")))
       (theme-dir (concat user-emacs-directory (file-name-as-directory "theme"))))
   (when (file-directory-p lisp-dir)
-	(add-to-list 'load-path lisp-dir)
-	; add subdirectories of ~/emacs.d/lisp/ to the load-path
-	(let ((default-directory lisp-dir))
-	  (normal-top-level-add-subdirs-to-load-path)))
+    (add-to-list 'load-path lisp-dir)
+    ; add subdirectories of ~/emacs.d/lisp/ to the load-path
+    (let ((default-directory lisp-dir))
+      (normal-top-level-add-subdirs-to-load-path)))
   (when (file-directory-p theme-dir)
     (add-to-list 'custom-theme-load-path theme-dir)))
 
@@ -115,7 +120,7 @@
 ;; package
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "https://melpa.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
 ;; allow upgrading built-in packages
 (setq package-install-upgrade-built-in t)
 ;; export load-path and autoloads of installed packages,b
