@@ -1,11 +1,12 @@
 auto-save-list/
 games/
 eshell/
-README.*
-recentf
-session.*
-tramp
 server/
 org-persist/
 bookmarks
 transient/
+eln-cache/
+README.*
+recentf
+session.*
+tramp
