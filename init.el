@@ -18,7 +18,7 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(ws-butler buffer-move org-appear all-the-icons-ivy all-the-icons centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(eglot eldoc erc faceup flymake idlwave jsonrpc project python soap-client tramp use-package verilog-mode xref ws-butler buffer-move org-appear all-the-icons-ivy all-the-icons centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
