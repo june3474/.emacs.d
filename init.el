@@ -9,7 +9,9 @@
  '(compilation-window-height 8)
  '(cua-mode t nil (cua-base))
  '(custom-safe-themes
-   '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7" "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0" default))
+   '("cf861f5603b7d22cb3545a7c63b2ee424c34d8ed3b3aa52d13abfea4765cffe7"
+     "5185a285365a768a30ac274bdbc4437e7fd2fbe3107a1b0f2b60e900181905e0"
+     default))
  '(delete-selection-mode t)
  '(dired-listing-switches "-ahlv --group-directories-first")
  '(ediff-split-window-function 'split-window-horizontally)
@@ -18,7 +20,14 @@
  '(make-backup-files nil)
  '(mouse-wheel-progressive-speed nil)
  '(package-selected-packages
-   '(eglot eldoc erc faceup flymake idlwave jsonrpc project python soap-client tramp use-package verilog-mode xref ws-butler buffer-move org-appear all-the-icons-ivy all-the-icons centaur-tabs diminish counsel expand-region web-mode org-indent my-org-faces elisp-mode prog-mode text-mode vscode-dark-plus-theme jetbrains-darcula-theme org-bullets ivy))
+   '(all-the-icons all-the-icons-ivy buffer-move centaur-tabs counsel
+                   diminish editorconfig eglot eldoc elisp-mode erc
+                   expand-region faceup flymake idlwave ivy
+                   jetbrains-darcula-theme jsonrpc my-org-faces
+                   org-appear org-bullets org-indent prog-mode project
+                   python soap-client text-mode tramp transient
+                   use-package verilog-mode vscode-dark-plus-theme
+                   web-mode which-key window-tool-bar ws-butler xref))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
