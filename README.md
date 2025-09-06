@@ -15,7 +15,11 @@ git clone --recurse-submodules
 
 --- 
 
-## When updating after
+## update
 
 git pull --recurse-submodules
 
+
+## push
+
+git push --recurse-submodules=on-demand
