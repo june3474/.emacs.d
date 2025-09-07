@@ -65,6 +65,62 @@ to process the carryover entries in `prev-buffer'."
     (with-current-buffer prev-buffer
       (funcall org-journal-handle-old-carryover-fn entries))))
 
+(defun my-org-journal--carryover ()
+  "Moves all items matching `org-journal-carryover-items' from the
+previous day's file to the current file."
+  (interactive)
+  (let* ((org-journal-find-file 'find-file)
+         (mapper (lambda ()
+                   (let ((headings (org-journal--carryover-item-with-parents)))
+                     ;; Since the next subtree now starts at point,
+                     ;; continue mapping from before that, to include it
+                     ;; in the search
+                     ;(backward-char)
+                     (setq org-map-continue-from (point))
+                     headings)))
+         carryover-paths prev-buffer)
+
+    ;; Get carryover paths
+    (save-excursion
+      (save-restriction
+        (when (org-journal--open-entry t t)
+          (setq prev-buffer (current-buffer))
+          (unless (org-journal--daily-p)
+            (org-narrow-to-subtree))
+          (setq carryover-paths (org-map-entries mapper org-journal-carryover-items)))))
+
+    (when (and prev-buffer carryover-paths)
+      ;; `text-headings-re' and `text-headings' are used to extract the headings only from
+      ;; the carryovers -- added by dks
+      ;; A or more \*, space, heading, optional('*' at the end) drawers following right after
+      (let ((text-headings-re "^\\*+ +.+\n\\(?::[[:ascii:]]+?:\\(?:.\\|\n\\)+?:END:\n\\)*")
+            (carryovers (list))
+            cleared-carryover-paths text text-headings)
+        ;; Construct the text to carryover, and remove any duplicate elements from carryover-paths
+        (cl-loop
+         for paths in carryover-paths
+         do (cl-loop
+             for path in paths
+             count t into counter
+             do (unless (cl-member (cons (car path) (cadr path)) carryovers :test 'equal)
+                  (push (cons (car path) (cadr path)) carryovers)
+                  (setq text (concat text (cddr path)))
+                  (setq text-headings (concat text-headings
+                                              (progn
+                                                (string-match text-headings-re (cddr path))
+                                                (match-string 0 (cddr path)))))
+                  (if cleared-carryover-paths
+                      (setcdr (last cleared-carryover-paths) (list path))
+                    (setq cleared-carryover-paths (list path))))))
+        (if org-journal-carryover-headings-only
+            (org-journal-carryover-items text-headings cleared-carryover-paths prev-buffer)
+          (org-journal-carryover-items text cleared-carryover-paths prev-buffer)))
+      (org-journal--carryover-delete-empty-journal prev-buffer))
+
+    (when org-journal--kill-buffer
+      (mapc 'kill-buffer org-journal--kill-buffer)
+      (setq org-journal--kill-buffer nil))))
+
 (defun my-org-journal-insert-template ()
   "Insert template after a new journal is created.
 
@@ -74,49 +130,40 @@ level 2 heading(i.e., **), the same as `org-journal-time-prefix'.
 After this function finish, cursor would be at (point-max) and
 (org-narrow-to-subtree) is still in effect."
 
-  ;; The value of `org-journal-time-prefix' is "** " 
-  (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
-        (templates (reverse '("Work" "Tennis" "대구 살이" "Guitar" "Computer & Programming")))
-        insert-point)
-    ;; Current position would be at (column 0) of the new line after the end of the today's
-    ;; subtree or (point-max).
-    (save-restriction
-      (save-match-data
-        ;; case-sensitive search
-        (setq case-fold-search nil)
-        ;; Go upto date level. Now, point would be at the bol of today's date heading
-        (while (org-up-heading-safe))
-        ;; Hide all other dates
-        (org-narrow-to-subtree)
-        (save-excursion
-          (setq insert-point (progn
-                               (re-search-forward ":END:" nil t)
-                               (forward-line)
-                               (unless (eq (current-column) 0) (insert "\n"))
-                               (point))))
-        ;; Insert template
-        (dolist (template templates)
-          ;; Check if template heading is already there,
-          ;; if not, insert the template item
-          (unless (re-search-forward (concat heading-re template) nil t)
-            (goto-char insert-point)
-            (insert org-journal-time-prefix template "\n")))))))
+  (when org-journal--new-entry-header-p
+    ;; The value of `org-journal-time-prefix' is "** "
+    (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
+          (templates '("Work" "Tennis" "대구 살이" "Guitar" "Computer & Programming")))
+      ;; Current position would be at (column 0) of the new line after the end
+      ;; of the today's subtree or (point-max).
+      (save-restriction
+        (save-match-data
+          ;; case-sensitive search
+          (setq case-fold-search nil)
+          ;; Go upto date level. Now, point being at the bol of today's date heading
+          (while (org-up-heading-safe))
+          ;; Hide all other dates
+          (org-narrow-to-subtree)
+          ;; Insert template
+          (dolist (template templates)
+            ;; Check if template heading is already there,
+            ;; if not, insert a template item
+            (unless (progn (goto-char (point-min))
+                           (re-search-forward (concat heading-re template) nil t))
+              (goto-char (point-max))
+              (insert org-journal-time-prefix template "\n"))))))))
 
 (defun my-org-journal--finalize-view ()
   "my final view.
 
 Basically, 1) show only date-level headings
 2) but for today's journal, show upto 2'nd level(time-level) heading."
-  (let ((hide-level (if org-journal-hide-entries-p
-                        (min (org-journal--time-entry-level) 2)
-                      2)))
-    ;; show only top-level headings
-    (org-overview)
-    ;; Now, current position be in the middle of the today's date-heading
-    (org-back-to-heading) ;; move to bol of the heading or inlinetask. Necessary
-    (org-fold-show-children hide-level)
-    (org-fold-hide-drawer-all))
-
+  ;; show only top-level headings
+  (org-overview)
+  ;; Now, current position be in the middle of the today's date-heading
+  (org-back-to-heading) ;; move to bol of the heading or inlinetask. Necessary
+  (org-fold-show-subtree)
+  (org-fold-hide-drawer-all)
   ;; locate cursor
   (re-search-forward (concat "^" (regexp-quote org-journal-time-prefix)) nil t)
   (end-of-line))
