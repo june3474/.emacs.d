@@ -69,7 +69,7 @@ to process the carryover entries in `prev-buffer'."
   "Moves all items matching `org-journal-carryover-items' from the
 previous day's file to the current file."
   (interactive)
-  (let* ((org-journal-find-file 'find-file)
+  (let* ((org-journal-find-file-fn 'find-file)
          (mapper (lambda ()
                    (let ((headings (org-journal--carryover-item-with-parents)))
                      ;; Since the next subtree now starts at point,
@@ -133,7 +133,7 @@ After this function finish, cursor would be at (point-max) and
   (when org-journal--new-entry-header-p
     ;; The value of `org-journal-time-prefix' is "** "
     (let ((heading-re (concat "^" (regexp-quote org-journal-time-prefix)))
-          (templates '("Work" "Tennis" "대구 살이" "Guitar" "Computer & Programming")))
+          (templates '("퇴직 일기" "Tennis" "Guitar" "Computer & Programming")))
       ;; Current position would be at (column 0) of the new line after the end
       ;; of the today's subtree or (point-max).
       (save-restriction
