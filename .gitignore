@@ -6,6 +6,7 @@ org-persist/
 bookmarks
 transient/
 eln-cache/
+var/
 README.*
 recentf
 session.*

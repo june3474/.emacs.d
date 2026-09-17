@@ -149,6 +149,12 @@
   (setq eval-expression-print-length nil
         eval-expression-print-level nil))
 
+;;; lua mode
+(use-package lua-mode
+  :config
+  ;; Align closing parentheses with the start of the line
+  (setq lua-indent-close-paren-align nil))
+
 ;;; C & C++ mode
 (use-package cc-mode
   :defer t
