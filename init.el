@@ -23,11 +23,12 @@
    '(all-the-icons all-the-icons-ivy buffer-move centaur-tabs compat
                    counsel diminish editorconfig eglot eldoc
                    elisp-mode erc expand-region faceup flymake idlwave
-                   ivy jetbrains-darcula-theme jsonrpc my-org-faces
-                   org-appear org-bullets org-indent prog-mode project
-                   python soap-client text-mode tramp transient
-                   use-package verilog-mode vscode-dark-plus-theme
-                   web-mode which-key window-tool-bar ws-butler xref))
+                   ivy jetbrains-darcula-theme jsonrpc markdown-mode
+                   markdown-preview-mode my-org-faces org-appear
+                   org-bullets org-indent prog-mode project python
+                   soap-client text-mode tramp transient use-package
+                   verilog-mode vscode-dark-plus-theme web-mode
+                   which-key window-tool-bar ws-butler xref))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)

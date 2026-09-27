@@ -155,6 +155,12 @@
   ;; Align closing parentheses with the start of the line
   (setq lua-indent-close-paren-align nil))
 
+;; markdown mode
+(use-package gfm-mode
+  :ensure t
+  :mode ("\\.md\\'" . markdown-mode)
+  :init (setq markdown-command "pandoc"))
+
 ;;; C & C++ mode
 (use-package cc-mode
   :defer t
