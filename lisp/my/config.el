@@ -56,6 +56,7 @@
 (use-package ivy
   :demand  ;; load Now!
   :bind (:map ivy-minibuffer-map
+         ("S-SPC" . toggle-input-method)
          ([escape] . minibuffer-keyboard-quit))
   :config
   (setq ivy-use-virtual-buffers t
