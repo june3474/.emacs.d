@@ -627,12 +627,12 @@
       (:authors ("Sylvain Benner" . "sylvain.benner@gmail.com"))
       (:commit . "3c65fecd9917a41eaf6460f22187e2323821f3ce"))])
  (evil-matchit
-  . [(4 1 0) ((emacs (27 1))) "Vim matchit ported to Evil" tar
+  . [(4 1 1) ((emacs (27 1))) "Vim matchit ported to Evil" tar
      ((:url . "http://github.com/redguardtoo/evil-matchit")
       (:keywords "matchit" "vim" "evil")
       (:maintainer "Chen Bin" . "chenbin.sh@gmail.com")
       (:authors ("Chen Bin" . "chenbin.sh@gmail.com"))
-      (:commit . "8d0bca76ed9958fc5ad460e6085175c83695bbdb"))])
+      (:commit . "5dc85e7e624b65efe0b57f1c1ffc4695d6154e5d"))])
  (evil-nerd-commenter
   . [(3 6 1) ((emacs (26 1)))
      "Comment/uncomment lines efficiently. Like Nerd Commenter in Vim"
@@ -1016,7 +1016,7 @@
       (:authors ("Thierry Volpiatto" . "thievol@posteo.net"))
       (:commit . "3cd5097285dc10ac0898cf6f30c9699c3399e421"))])
  (hermes
-  . [(0 8 0)
+  . [(0 9 0)
      ((emacs (29 1)) (keymap-popup (0 4 0)) (websocket (1 15))
       (markdown-mode (2 6)))
      "Emacs frontend for Hermes Agent" tar
@@ -1024,7 +1024,7 @@
       (:keywords "tools" "convenience")
       (:maintainer "Thanos Apollo" . "public@thanosapollo.org")
       (:authors ("Thanos Apollo" . "public@thanosapollo.org"))
-      (:commit . "2ec10e56b798e251e68ce85306670794ffe6f877"))])
+      (:commit . "3f5cc4ea8686471fee72a89f742c792071e7e17d"))])
  (hideshowvis
   . [(0 9) ((emacs (27 1)))
      "Fringe markers for regions foldable by hideshow.el" tar
@@ -1386,6 +1386,14 @@
       (:authors ("Andrew J Cosgriff" . "andrew@cosgriff.name"))
       (:url . "https://elpa.nongnu.org/nongnu/nginx-mode.html")
       (:commit . "c4ac5de975d65c84893a130a470af32a48b0b66c"))])
+ (nightpanel-theme
+  . [(0 1 0) ((emacs (27 1))) "Saab instrument cluster colorscheme"
+     tar
+     ((:url . "https://github.com/gregfelice/nightpanel-theme")
+      (:keywords "faces" "theme")
+      (:maintainer "Greg Felice" . "gregfelice@gmail.com")
+      (:authors ("Greg Felice" . "gregfelice@gmail.com"))
+      (:commit . "e67d53b67f727f2f9f9bc948f69df2044c0d8c6d"))])
  (nix-mode
   . [(1 5 0) ((emacs (25 1)) (magit-section (0)) (transient (0 3)))
      "Major mode for editing .nix files" tar
