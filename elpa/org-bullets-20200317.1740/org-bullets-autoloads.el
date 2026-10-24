@@ -1,4 +1,4 @@
-;;; org-bullets-autoloads.el --- automatically extracted autoloads
+;;; org-bullets-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t; -*-
 ;;
 ;;; Code:
 
